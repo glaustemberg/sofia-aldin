@@ -22,10 +22,17 @@ body{background:var(--grafite);color:var(--linha);font-family:var(--corpo);font-
 .faixa{position:absolute;inset:0 0 auto 0;height:var(--faixa);background:var(--e-tinta);z-index:1}
 
 .cena{position:absolute;left:0;top:var(--faixa);bottom:0;width:60%;overflow:hidden;background:var(--e-tinta)}
-.cena-foto{position:absolute;left:0;top:0;width:auto;height:auto;max-width:none;display:block;transform-origin:0 0}
-.cena canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.js .cena-foto{visibility:hidden}
-.js.sem-gl .cena-foto{visibility:visible}
+/* a obra: foto real inteira, em cor, sem máscara; só escala uniforme a partir do mastro (main.js) */
+.cena-foto{position:absolute;left:0;top:0;width:auto;height:auto;max-width:none;display:block;transform-origin:0 0;z-index:1;will-change:transform,opacity}
+.js .cena-foto{opacity:0}
+.js.sem-cena .cena-foto{opacity:1}
+/* o projeto: desenho em linha da cena, por baixo da foto */
+.cena-desenho{position:absolute;left:0;top:0;display:none;overflow:visible;transform-origin:0 0}
+.js .cena-desenho{display:block}
+.cena-desenho path{fill:none;stroke:#DCE4E8;stroke-width:1;vector-effect:non-scaling-stroke;stroke-dasharray:1 1;stroke-dashoffset:1}
+/* moldura que se abre com a obra: filete laranja afastado da foto */
+.cena-moldura{position:absolute;left:0;top:0;z-index:2;pointer-events:none;opacity:0;transform-origin:0 0}
+.cena-moldura::before{content:"";position:absolute;inset:-7px;border:1px solid var(--e-laranja)}
 
 .bloco{position:absolute;right:0;top:0;bottom:0;width:40%;background:var(--e-tinta);
   padding:calc(var(--faixa) + 29vh) var(--pad) var(--pad);display:flex;flex-direction:column}

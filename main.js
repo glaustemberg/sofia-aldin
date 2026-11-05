@@ -1,197 +1,69 @@
 /* Abertura (cap. 0) e passagem (cap. 0b) · Sofia Aldin
-   Cena: WebGL desenha linhas (bordas da foto) e revela a foto por ordem de luminância;
-   canvas 2D desenha a Sofia em malha triangulada (pontos e arestas); SVG desenha cabos, grade e colunas da passagem.
-   Assets gerados da própria image2: linhas.png e ordem.png (desenho.py), malha-sofia*.bin (malha_sofia.py). */
+   Cena: o projeto e a obra. Um desenho em linha (SVG, ferramentas/desenho_svg.py) traça janela, cidade e ponte estaiada
+   com a rolagem; depois a foto real entra inteira, em cor, numa moldura com filete laranja que se abre a partir do
+   mastro da ponte. A foto cresce com o mastro fixo, então a ponte da foto pousa exatamente sobre a ponte desenhada.
+   A foto nunca é recortada nem mascarada: só escala uniforme, e o rosto fica dentro da cena em todos os quadros.
+   SVG à parte desenha os cabos laranja, a grade e a passagem. */
 (() => {
   const doc = document.documentElement;
   doc.classList.add('js');
-  // movimento reduzido: a construção guiada pela rolagem fica (o visitante controla); a entrada automática
-  // fica curta e sem o voo dos pontos
+  // movimento reduzido: a construção guiada pela rolagem fica (o visitante controla); a entrada automática fica curta
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const W0 = 1280, H0 = 853, FOCO = 500;
+  const MASTRO = [664, 240]; // ponto fixo da abertura da moldura (coordenadas da foto)
+  const K0 = 0.14; // tamanho da moldura quando a obra começa a abrir
   const $ = (s) => document.querySelector(s);
   const palco = $('.palco'), cena = $('.cena'), bloco = $('.bloco'), foto = $('.cena-foto');
-  const glc = $('.cena-gl'), dc = $('.cena-pontos');
+  const desenho = $('.cena-desenho'), moldura = $('.cena-moldura');
   const svgC = $('.tracos-claros'), svgE = $('.tracos-escuros'), svgG = $('.tracos-gancho');
   const cortina = $('.cortina'), nav = $('.nav');
   const NS = 'http://www.w3.org/2000/svg';
   const clamp01 = (v) => v < 0 ? 0 : v > 1 ? 1 : v;
   const smooth = (a, b, x) => { const t = clamp01((x - a) / (b - a)); return t * t * (3 - 2 * t); };
-  // mesma curva do shader: quanto da foto já apareceu num ponto de ordem k
-  const revelado = (k, r) => smooth(k - 0.05, k + 0.05, r);
-  const K_SOFIA = 0.12; // momento da Sofia em ordem.png (desenho.py): ela se revela inteira de uma vez
 
   // estado único da cena; intro e rolagem escrevem em campos separados
-  const S = { line: 0, dots: 0, mf: 0, si: 0, reveal: 0, ci: 0, cs: 0, grid: 0, fall: 0, morph: 0, curtain: 0 };
-  let M = null, mobile = innerWidth <= 760, dpr = 1, gl = null, glU = {}, ctx = null, pts = [];
-  let malha = null, figA = null, figP = null, fx = 0, fy = 0; // arestas e pontos da figura parada (pré-desenhados)
-  const NF = 12, faixas = Array.from({ length: NF }, () => []);
+  const S = { line: 0, draw: 0, obra: 0, ci: 0, cs: 0, grid: 0, fall: 0, morph: 0, curtain: 0 };
+  let M = null, mobile = innerWidth <= 760;
   let cabos = [], grade = [], gCabos = null, gGrade = null, linhasPilar = [];
   let ultimo = '';
   const CHAVES = Object.keys(S);
+  const tracos = [...desenho.querySelectorAll('path')].map((e) => ({ e, i: e.dataset.f === 'i', k: +e.dataset.k, v: -1 }));
 
-  const carregar = (src) => new Promise((ok, erro) => { const i = new Image(); i.onload = () => ok(i); i.onerror = erro; i.src = src; });
-
-  // fontes externas lentas não seguram a cena: no máximo 2,5 s
+  // fontes lentas não seguram a cena: no máximo 2,5 s
   const fontes = Promise.race([document.fonts ? document.fonts.ready : null, new Promise((ok) => setTimeout(ok, 2500))]);
-  let imagens = null;
-  Promise.all([
-    carregar('assets/sofia-janela.jpg'), carregar('assets/linhas.png'), carregar('assets/ordem.png'), fontes
-  ]).then(iniciar).catch((e) => {
+  const fotoPronta = foto.complete ? Promise.resolve() : new Promise((ok) => { foto.onload = ok; foto.onerror = ok; });
+  Promise.all([fotoPronta, fontes]).then(iniciar).catch((e) => {
     console.error('[sofia] abertura:', e);
-    doc.classList.add('sem-gl'); try { layout(); } catch (e2) {} pronta();
+    doc.classList.add('sem-cena'); try { layout(); } catch (e2) {} pronta();
   });
 
   // avisa a página integrada que a abertura já criou o pin (capítulos iniciam depois)
   function pronta() { document.dispatchEvent(new Event('abertura:pronta')); }
 
-  function iniciar([imFoto, imLinhas, imOrdem]) {
-    imagens = [imFoto, imLinhas, imOrdem];
-    let okGL = false;
-    try { okGL = iniciarGL(imFoto, imLinhas, imOrdem); } catch (e) { console.warn('[sofia] WebGL:', e); gl = null; }
-    if (!okGL) doc.classList.add('sem-gl');
-    // celular pode perder o contexto (aba em segundo plano, memória): cai para a foto em 2D e volta quando restaurar
-    glc.addEventListener('webglcontextlost', (e) => { e.preventDefault(); gl = null; doc.classList.add('sem-gl'); ultimo = ''; });
-    glc.addEventListener('webglcontextrestored', () => {
-      try { if (iniciarGL(...imagens)) { doc.classList.remove('sem-gl'); layout(); ultimo = ''; } } catch (e) {}
-    });
-    ctx = dc.getContext('2d');
+  function iniciar() {
     layout();
     addEventListener('resize', debounce(() => { layout(); ultimo = ''; }, 150));
-
     gsap.registerPlugin(ScrollTrigger, SplitText);
     if (RM) introCalma(); else intro();
     rolagem();
     gancho();
     gsap.ticker.add(render);
     pronta();
-    // a malha não segura a cena: chega depois e entra com fade
-    fetch(mobile ? 'assets/malha-sofia-celular.bin' : 'assets/malha-sofia.bin')
-      .then((r) => r.arrayBuffer()).then(lerMalha).catch(() => {});
   }
 
-  function lerMalha(bin) {
-    // malha: Uint32 nP, nE · Uint16 xy*20 · Uint16 j-i por aresta · Uint8 alfa ponto, alfa linha, arestas por i
-    const [nP, nE] = new Uint32Array(bin, 0, 2), o = 8 + nP * 4 + nE * 2;
-    const xy = new Uint16Array(bin, 8, nP * 2), dj = new Uint16Array(bin, 8 + nP * 4, nE);
-    const ap = new Uint8Array(bin, o, nP), la = new Uint8Array(bin, o + nP, nP), cnt = new Uint8Array(bin, o + 2 * nP, nP);
-    for (let i = 0; i < nP; i++) {
-      const ang = Math.random() * Math.PI * 2, dist = 6 + Math.pow(Math.random(), 2) * 44;
-      pts.push({ x: xy[i * 2] / 20, y: xy[i * 2 + 1] / 20,
-        ox: Math.cos(ang) * dist, oy: Math.sin(ang) * dist - 10, px: 0, py: 0 });
-      if (ap[i] > 7) faixas[Math.min(NF - 1, (ap[i] * NF) >> 8)].push(pts[i]); // pontos em faixas de alfa
-    }
-    // arestas em 8 faixas de alfa (alfa = o menor das duas pontas): um traçado por faixa
-    malha = Array.from({ length: 8 }, () => []);
-    for (let i = 0, e = 0; i < nP; i++) for (let c = 0; c < cnt[i]; c++, e++) {
-      const j = i + dj[e], a = Math.min(la[i], la[j]);
-      if (a > 6) malha[Math.min(7, a >> 5)].push(i, j);
-    }
-    for (const p of pts) { p.px = (p.x - M.sx0) * M.s; p.py = (p.y - M.sy0) * M.s; }
-    desenharFigura();
-    gsap.to(S, { mf: 1, duration: 1.2, ease: 'power2.out' });
-  }
-
-  /* ---------- WebGL ---------- */
-  function iniciarGL(imFoto, imLinhas, imOrdem) {
-    gl = glc.getContext('webgl', { antialias: false, alpha: false, premultipliedAlpha: false })
-      || glc.getContext('experimental-webgl', { antialias: false, alpha: false, premultipliedAlpha: false });
-    if (!gl) return false;
-    const vs = `attribute vec2 p;uniform vec2 uA,uB;varying vec2 v;
-      void main(){v=mix(uA,uB,vec2(p.x*.5+.5,.5-p.y*.5));gl_Position=vec4(p,0.,1.);}`;
-    const fs = `precision mediump float;varying vec2 v;
-      uniform sampler2D uFoto,uLinhas,uOrdem;uniform float uRev,uLin;
-      void main(){
-        vec4 o=texture2D(uOrdem,v);float k=o.r;float w=mix(.004,.05,o.g);
-        float f=smoothstep(k-w,k+w,uRev);
-        float tr=smoothstep(0.,.14,uLin*1.3-(.72*v.y+.28*k));
-        vec4 lc=texture2D(uLinhas,v);
-        float la=lc.a*tr*(1.-smoothstep(k+w*.5,k+w+.06,uRev));
-        vec3 c=mix(vec3(.0588,.1412,.2),texture2D(uFoto,v).rgb,f);
-        gl_FragColor=vec4(mix(c,lc.rgb,la),1.); // cor do traço vem do desenho: marfim na figura, #F3F3F0 na cena
-      }`;
-    const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
-    const pr = gl.createProgram();
-    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
-    gl.linkProgram(pr);
-    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { gl = null; return false; }
-    gl.useProgram(pr);
-    const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
-    const loc = gl.getAttribLocation(pr, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    [['uFoto', imFoto], ['uLinhas', imLinhas], ['uOrdem', imOrdem]].forEach(([nome, im], i) => {
-      gl.activeTexture(gl.TEXTURE0 + i);
-      gl.bindTexture(gl.TEXTURE_2D, gl.createTexture());
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, im);
-      const filtro = nome === 'uOrdem' ? gl.NEAREST : gl.LINEAR; // ordem: camadas com borda nítida
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filtro);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filtro);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.uniform1i(gl.getUniformLocation(pr, nome), i);
-    });
-    ['uA', 'uB', 'uRev', 'uLin'].forEach((u) => glU[u] = gl.getUniformLocation(pr, u));
-    return true;
-  }
-
-  /* ---------- layout: foto em cover, pontos e SVG no mesmo mapeamento ---------- */
+  /* ---------- layout: foto em cover, desenho e SVG no mesmo mapeamento ---------- */
   function layout() {
     mobile = innerWidth <= 760;
     const pr = palco.getBoundingClientRect(), cr = cena.getBoundingClientRect(), br = bloco.getBoundingClientRect();
     const w = cr.width, h = cr.height, L = cr.left - pr.left, T = cr.top - pr.top;
     const s = Math.max(w / W0, h / H0), vw = w / s, vh = h / s;
     const sx0 = Math.min(Math.max(FOCO - vw / 2, 0), W0 - vw), sy0 = Math.max(0, (H0 - vh) * 0.25);
-    M = { s, sx0, sy0, L, T, w, h, PW: pr.width, PH: pr.height };
+    M = { s, sx0, sy0, L, T, w, h, PW: pr.width, PH: pr.height,
+      px: (MASTRO[0] - sx0) * s, py: (MASTRO[1] - sy0) * s };
     foto.style.width = W0 * s + 'px';
-    foto.style.transform = `translate(${-sx0 * s}px,${-sy0 * s}px)`;
-    dpr = Math.min(devicePixelRatio || 1, mobile ? 1.5 : 2);
-    if (gl) {
-      glc.width = Math.round(w * dpr); glc.height = Math.round(h * dpr);
-      gl.viewport(0, 0, glc.width, glc.height);
-      gl.uniform2f(glU.uA, sx0 / W0, sy0 / H0);
-      gl.uniform2f(glU.uB, (sx0 + vw) / W0, (sy0 + vh) / H0);
-    }
-    dc.width = Math.round(w * dpr); dc.height = Math.round(h * dpr);
-    for (const p of pts) { p.px = (p.x - sx0) * s; p.py = (p.y - sy0) * s; }
-    if (malha) desenharFigura();
+    desenho.style.width = W0 * s + 'px'; desenho.style.height = H0 * s + 'px';
+    desenho.style.transform = `translate(${-sx0 * s}px,${-sy0 * s}px)`;
     desenharTracos(pr, br);
-  }
-
-  // a figura parada é pré-desenhada uma vez (arestas; pontos): a rolagem só copia as duas imagens
-  function desenharFigura() {
-    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-    for (const p of pts) { if (p.px < x0) x0 = p.px; if (p.px > x1) x1 = p.px; if (p.py < y0) y0 = p.py; if (p.py > y1) y1 = p.py; }
-    fx = Math.floor(x0 * dpr) - 2; fy = Math.floor(y0 * dpr) - 2;
-    const cw = Math.ceil(x1 * dpr) - fx + 4, ch = Math.ceil(y1 * dpr) - fy + 4;
-    const nova = () => { const c = document.createElement('canvas'); c.width = cw; c.height = ch; return c; };
-    figA = nova(); figP = nova();
-    const g = figA.getContext('2d');
-    g.strokeStyle = '#EEF1F2'; g.lineWidth = 0.65 * dpr;
-    malha.forEach((lista, b) => {
-      if (!lista.length) return;
-      g.globalAlpha = (b + 0.5) / 8;
-      g.beginPath();
-      for (let k = 0; k < lista.length; k += 2) {
-        const p = pts[lista[k]], q = pts[lista[k + 1]];
-        g.moveTo(p.px * dpr - fx, p.py * dpr - fy); g.lineTo(q.px * dpr - fx, q.py * dpr - fy);
-      }
-      g.stroke();
-    });
-    pontos(figP.getContext('2d'), 1, 0, -fx, -fy, 1);
-  }
-
-  function pontos(g, alfa, off, dx, dy, passo) {
-    const sz = Math.max(1, 0.8 * dpr);
-    g.fillStyle = '#EEF1F2'; // papel frio, como as arestas
-    faixas.forEach((lista, b) => { // um alfa por faixa: o canvas agrupa os retângulos
-      g.globalAlpha = alfa * (b + 0.5) / NF;
-      if (g.globalAlpha < 0.03) return;
-      for (let i = 0; i < lista.length; i += passo) {
-        const p = lista[i];
-        g.fillRect((p.px + p.ox * off) * dpr + dx, (p.py + p.oy * off) * dpr + dy, sz, sz);
-      }
-    });
-    g.globalAlpha = 1;
   }
 
   function el(tag, attrs, pai) {
@@ -254,24 +126,24 @@
     if (chave === ultimo || !M) return;
     ultimo = chave;
 
-    if (gl) {
-      gl.uniform1f(glU.uRev, S.reveal); gl.uniform1f(glU.uLin, S.line);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      foto.style.opacity = '';
-    } else foto.style.opacity = smooth(0, 0.9, S.reveal).toFixed(3); // sem WebGL a foto surge com a rolagem
-
-    // Sofia em malha: na entrada os pontos chegam e as arestas acendem; parada, é uma cópia da figura pronta
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.clearRect(0, 0, dc.width, dc.height);
-    const fa = S.dots * S.mf * (1 - revelado(K_SOFIA, S.reveal));
-    if (fa > 0.005 && figP) {
-      // em voo vai um terço dos pontos (leve); no pouso entra a camada completa
-      const pouso = S.si > 0.999 ? 1 : smooth(0.72, 1, S.si);
-      ctx.globalAlpha = fa * smooth(0.4, 1, S.si); ctx.drawImage(figA, fx, fy);
-      if (pouso > 0) { ctx.globalAlpha = fa * pouso; ctx.drawImage(figP, fx, fy); }
-      if (pouso < 1) pontos(ctx, fa * (1 - pouso), 1 - S.si, 0, 0, 3);
-      ctx.globalAlpha = 1;
+    // desenho: cada traço se estende na sua vez (data-k); entrada automática (i) e rolagem (r)
+    for (const t of tracos) {
+      const v = clamp01(((t.i ? S.line : S.draw) * 1.25 - t.k) / 0.25);
+      if (v === t.v) continue;
+      t.v = v; t.e.style.strokeDashoffset = (1 - v).toFixed(4);
     }
+
+    // obra: a foto inteira cresce com o mastro fixo e pousa sobre o desenho; a moldura acompanha a borda
+    const { s, sx0, sy0, px, py, w, h } = M;
+    const k = K0 + (1 - K0) * smooth(0, 1, S.obra);
+    const tx = px - (sx0 * s + px) * k, ty = py - (sy0 * s + py) * k;
+    foto.style.transform = `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) scale(${k.toFixed(5)})`;
+    foto.style.opacity = smooth(0, 0.06, S.obra).toFixed(3);
+    const x0 = Math.max(0, tx), y0 = Math.max(0, ty);
+    const x1 = Math.min(w, tx + W0 * s * k), y1 = Math.min(h, ty + H0 * s * k);
+    moldura.style.transform = `translate(${x0.toFixed(1)}px,${y0.toFixed(1)}px)`;
+    moldura.style.width = (x1 - x0).toFixed(1) + 'px'; moldura.style.height = (y1 - y0).toFixed(1) + 'px';
+    moldura.style.opacity = (smooth(0, 0.06, S.obra) * (1 - smooth(0.86, 1, S.obra))).toFixed(3);
 
     // cabos
     const c = 0.5 * S.ci + 0.5 * S.cs;
@@ -299,9 +171,7 @@
   function intro() {
     const st = new SplitText('.titulo', { type: 'lines', mask: 'lines' });
     const tl = gsap.timeline({ defaults: { ease: 'expo.out' }, onComplete: () => st.revert() });
-    tl.to(S, { line: 1, duration: 3.4, ease: 'power3.out' }, 0)
-      .to(S, { dots: 1, duration: 2.6, ease: 'power2.out' }, 0.5)
-      .to(S, { si: 1, duration: 3.2 }, 0.5)
+    tl.to(S, { line: 1, duration: 3.0, ease: 'power3.out' }, 0.2)
       .to(S, { ci: 1, duration: 2.4 }, 1.1)
       .from(nav, { autoAlpha: 0, duration: 1.4 }, 0.4)
       .from(st.lines, { yPercent: 105, duration: 1.6, stagger: 0.11 }, 0.35)
@@ -309,28 +179,31 @@
       .from('.dica-in', { autoAlpha: 0, y: 10, duration: 1.2 }, 1.7);
   }
 
-  /* ---------- rolagem: construção e passagem ---------- */
+  /* ---------- rolagem: projeto, obra e passagem ---------- */
   function rolagem() {
     gsap.set(['.legenda', '.cena-leg'], { autoAlpha: 0, y: 14 });
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
-      scrollTrigger: { trigger: '.abertura', pin: palco, start: 'top top', end: () => '+=' + innerHeight * (mobile ? 2.6 : 3.0), scrub: 1.1, anticipatePin: 1, invalidateOnRefresh: true }
+      scrollTrigger: { trigger: '.abertura', pin: palco, start: 'top top', end: () => '+=' + innerHeight * (mobile ? 3.0 : 3.4), scrub: 1.1, anticipatePin: 1, invalidateOnRefresh: true }
     });
-    // construção: camadas nítidas (céu e cidade, ponte e fundo, Sofia); passagem em menos de 1 tela
+    // 1. o projeto se traça (cidade, ponte antiga, estaiada, viadutos); 2. a obra abre a partir do mastro; 3. passagem
     tl.to('.dica', { autoAlpha: 0, y: -8, duration: 0.5 }, 0)
-      .to(S, { reveal: 1, duration: 3.4, ease: 'none' }, 0.2)
-      .to(S, { cs: 1, duration: 2, ease: 'power2.inOut' }, 0.8)
-      .to('.legenda', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 1.6)
-      .to('.cena-leg', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 2.6)
-      .to('.cena-leg', { autoAlpha: 0, duration: .4 }, 4.1)
+      .to(S, { draw: 1, duration: 1.9 }, 0.1)
+      .to(S, { cs: 1, duration: 2, ease: 'power2.inOut' }, 0.6)
+      .to('.legenda', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 1.4)
+      .to(S, { obra: 1, duration: 1.7 }, 1.8)
+      .to('.cena-leg', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 3.0)
+      .to('.cena-leg', { autoAlpha: 0, duration: .4 }, 4.5)
       .to(S, { grid: 1, duration: 1.6, ease: 'power1.inOut' }, 1.8)
-      // pausa curta no estado r2-03; os cabos descem e viram a grade sobre o amarelo
-      .to(S, { morph: 1, duration: 1.4, ease: 'none' }, 4.0)
-      .to(S, { fall: 1, duration: .6, ease: 'power1.in' }, 4.0)
-      .to(S, { curtain: 1, duration: 1.3, ease: 'power2.inOut' }, 4.3)
-      .to(nav, { color: '#0F2433', duration: 0.2 }, 4.35)
-      .from('.carimbo', { yPercent: 40, autoAlpha: 0, duration: 0.7, ease: 'power2.out' }, 4.9)
-      .to({}, { duration: 0.3 }, 5.6);
+      // pausa com a foto inteira; a obra volta para dentro da moldura (inteira, sem corte) antes de qualquer
+      // traço ou papel passar por ela; depois os cabos descem, viram a grade, e o papel da prancha sobe
+      .to(S, { obra: 0, duration: .5, ease: 'power1.in' }, 4.6)
+      .to(S, { morph: 1, duration: 1.3, ease: 'none' }, 5.0)
+      .to(S, { fall: 1, duration: .6, ease: 'power1.in' }, 5.0)
+      .to(S, { curtain: 1, duration: 1.2, ease: 'power2.inOut' }, 5.2)
+      .to(nav, { color: '#0F2433', duration: 0.2 }, 5.25)
+      .from('.carimbo', { yPercent: 40, autoAlpha: 0, duration: 0.7, ease: 'power2.out' }, 5.7)
+      .to({}, { duration: 0.3 }, 6.4);
   }
 
   function gancho() {
@@ -343,11 +216,10 @@
     });
   }
 
-  // movimento reduzido: tudo chega em 0,8 s por fade, sem pontos voando nem texto subindo
+  // movimento reduzido: a entrada chega em 0,8 s por fade, sem texto subindo
   function introCalma() {
-    S.si = 1;
     gsap.timeline({ defaults: { duration: 0.8, ease: 'power1.out' } })
-      .to(S, { line: 1, dots: 1, ci: 1 }, 0)
+      .to(S, { line: 1, ci: 1 }, 0)
       .from([nav, '.titulo', '.filete', '.dica-in'], { autoAlpha: 0 }, 0);
   }
 
