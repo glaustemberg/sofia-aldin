@@ -1,0 +1,157 @@
+/* Opção 1, Estaiada: "prancha técnica".
+   Deriva da abertura (a ponte estaiada do Recife): engenharia como metáfora de estratégia.
+   Paleta: papel frio de prancha e azul-aço como dominantes; laranja de obra (a cor das pontes) só para cabos, cotas e números.
+   Tipo: Inter Tight leve (300) nos títulos, IBM Plex Mono nos números e nas cotas; sem a serifa da Opção 3,
+   sem o peso 600 da Opção 2. Molduras: filete fino com afastamento e marcas de canto, como num desenho técnico.
+   Todo seletor preso a body[data-opcao="estaiada"]. Contrastes conferidos: tinta/papel 13,9:1; laranja-tx/papel 4,6:1;
+   laranja-cl/tinta 5,7:1; papel/tinta 13,9:1. */
+
+body[data-opcao="estaiada"] {
+  --e1-papel: #EEF1F2;
+  --e1-papel-2: #E1E6E8;     /* faixa de apoio sobre o papel (só forma) */
+  --e1-tinta: #0F2433;       /* azul-aço: texto e planos escuros */
+  --e1-aco: #18323F;         /* plano escuro secundário */
+  --e1-laranja: #E2531C;     /* cabos, cotas e marcas (forma) */
+  --e1-laranja-tx: #C2410C;  /* laranja para texto sobre o papel */
+  --e1-laranja-cl: #F07A3E;  /* laranja para texto sobre a tinta */
+  --e1-fio: rgba(15, 36, 51, .22);
+  --serifa: "Inter Tight", system-ui, sans-serif;
+  background: var(--e1-papel);
+}
+html:has(body[data-opcao="estaiada"]) { background: var(--e1-papel); }
+body[data-opcao="estaiada"] ::selection { background: var(--e1-laranja); color: var(--e1-tinta); }
+
+/* ---------- paleta por capítulo: papel e aço se alternam ---------- */
+body[data-opcao="estaiada"] .cx { --cx-amarelo: var(--e1-papel); --cx-azul: var(--e1-tinta); --cx-serif: "Inter Tight", system-ui, sans-serif; --e1-acc: var(--e1-laranja-tx); }
+body[data-opcao="estaiada"] .c04 { --cx-azul: var(--e1-papel); --cx-branco: var(--e1-tinta); --e1-acc: var(--e1-laranja-cl); background: var(--e1-tinta); color: var(--e1-papel); }
+body[data-opcao="estaiada"] .c611 { --c611-am: var(--e1-laranja-tx); --c611-nav: var(--e1-tinta); --c611-serif: "Inter Tight", system-ui, sans-serif;
+  --c611-bg: var(--e1-papel); --c611-ink: var(--e1-tinta); --c611-acc: var(--e1-laranja-tx); --e1-acc: var(--e1-laranja-tx); }
+/* 05 números: papel, números em tinta com o laranja nas unidades */
+body[data-opcao="estaiada"] .c611-num { --c611-bg: var(--e1-papel); --c611-ink: var(--e1-tinta); --c611-acc: var(--e1-tinta); }
+/* 06 fora do iGaming: aço */
+body[data-opcao="estaiada"] .c611-fora { --c611-am: var(--e1-laranja-cl); --c611-bg: var(--e1-tinta); --c611-ink: var(--e1-papel); --c611-acc: var(--e1-laranja-cl); --e1-acc: var(--e1-laranja-cl); }
+/* 07 Corinthians: papel; a abertura do case fica no aço para a foto respirar */
+body[data-opcao="estaiada"] .c611-cor { --c611-bg: var(--e1-papel); --c611-ink: var(--e1-tinta); --c611-acc: var(--e1-tinta); --c611-br: var(--e1-tinta); }
+body[data-opcao="estaiada"] .c611-cor-intro { --c611-am: var(--e1-laranja-cl); background: var(--e1-tinta); color: var(--e1-papel); --c611-br: var(--e1-papel); --e1-acc: var(--e1-laranja-cl); }
+/* 08 Carnaval: aço (o azul de "azular") com o laranja de acento */
+body[data-opcao="estaiada"] .c611-car { --c611-am: var(--e1-laranja-cl); --c611-bg: var(--e1-tinta); --c611-ink: var(--e1-papel); --c611-acc: var(--e1-laranja-cl); --c611-br: var(--e1-papel); --e1-acc: var(--e1-laranja-cl); }
+body[data-opcao="estaiada"] .c611-m { background: var(--e1-aco); }
+body[data-opcao="estaiada"] .c611-car-intro { background: var(--e1-papel); color: var(--e1-tinta); }
+body[data-opcao="estaiada"] .c611-car-azul { background: var(--e1-tinta); }
+body[data-opcao="estaiada"] .c611-cor-cor { background: var(--e1-papel); }
+body[data-opcao="estaiada"] .c611-ctt-card { background: var(--e1-papel); }
+body[data-opcao="estaiada"] .c611 .c611-sala .c611-folha { fill: var(--e1-papel); }
+/* 09 Cida: papel */
+body[data-opcao="estaiada"] .c611-cida { --c611-bg: var(--e1-papel); --c611-ink: var(--e1-tinta); --c611-acc: var(--e1-laranja-tx); --c611-br: var(--e1-tinta); }
+/* 10 formato: aço */
+body[data-opcao="estaiada"] .c611-fmt { --c611-am: var(--e1-laranja-cl); --c611-bg: var(--e1-tinta); --c611-ink: var(--e1-papel); --c611-acc: var(--e1-laranja-cl); --c611-br: var(--e1-papel); --e1-acc: var(--e1-laranja-cl); }
+/* 11 contato: papel */
+body[data-opcao="estaiada"] .c611-ctt { --c611-bg: var(--e1-papel); --c611-ink: var(--e1-tinta); --c611-acc: var(--e1-laranja-tx); }
+
+/* ---------- tipografia: grotesca leve nos títulos ---------- */
+body[data-opcao="estaiada"] :is(.cx, .c611) :is(h2, .c02-titulo, .c03-titulo, .c04-plano-t, .c611-display, .c611-cor-display,
+  .c611-car-display, .c611-cida-nome, .c611-caminho-t, .c611-ctt-frase, .c611-car-quote, .c611-cor-quote p) {
+  font-family: "Inter Tight", system-ui, sans-serif; font-weight: 300; letter-spacing: -.035em; line-height: 1.02;
+}
+body[data-opcao="estaiada"] :is(.cx, .c611) :is(h3, .c611-h3, .c611-cor-lead, .c611-tempo-t, .c611-oper-lead, .c611-cida-lead,
+  .c611-traj-t, .c611-area-t, .c611-selo-t, .c611-cor-fim-t, .c02-frase p, .c02-cred dd, .c04-destaque, .c04-tripe li, .c611-fmt-inv) {
+  font-family: "Inter Tight", system-ui, sans-serif; font-weight: 400; letter-spacing: -.015em;
+}
+/* a ênfase não é itálico: é a anotação em laranja, como a cota no desenho */
+body[data-opcao="estaiada"] :is(.cx, .c611) :is(em, i, .c02-n, .c611-cor-kicker, .c611-cida-rp, .c611-ctt-entro, .c611-ctt-nome, .c04-destaque) {
+  font-style: normal;
+}
+body[data-opcao="estaiada"] :is(.cx, .c611) :is(h2, .c02-titulo, .c03-titulo, .c611-display, .c611-cor-display, .c611-car-display,
+  .c611-caminho-t, .c611-ctt-frase, .c611-car-quote, .c611-cida-nome, .c01-tese, .c02-frase p) em { color: var(--e1-acc); font-weight: 400; }
+
+/* big numbers: mono, algarismos tabulares, com a cota que mede embaixo (desenhada pela rolagem em tema-estaiada.js) */
+body[data-opcao="estaiada"] :is(.cx-big, .c611-bn-n, .c611-cida-big, .c611-oper-n, .c03-n, .c611-ficha-n, .c611-premio b) {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 400; letter-spacing: -.07em;
+  font-variant-numeric: tabular-nums; font-style: normal;
+}
+body[data-opcao="estaiada"] .c611-bn--1 .c611-bn-n { font-size: min(46vh, 27vw); }
+body[data-opcao="estaiada"] .c611-bn--2 .c611-bn-n { font-size: min(36vh, 21vw); }
+body[data-opcao="estaiada"] .c611-bn-u { font-family: "IBM Plex Mono", ui-monospace, monospace; font-style: normal; letter-spacing: 0; color: var(--e1-acc); }
+body[data-opcao="estaiada"] :is(.cx-big, .c611-bn-n, .c611-cida-big, .c611-ficha-n).e1-cota {
+  --e1-k: 0;
+  padding-bottom: .12em;
+  background:
+    linear-gradient(var(--e1-laranja), var(--e1-laranja)) 0 100% / calc(var(--e1-k) * 100%) 1px no-repeat,
+    linear-gradient(var(--e1-laranja), var(--e1-laranja)) 0 100% / 1px .14em no-repeat,
+    linear-gradient(var(--e1-laranja), var(--e1-laranja)) calc(var(--e1-k) * 100%) 100% / 1px .14em no-repeat;
+}
+
+/* rótulos de capítulo: o fio vira cota (traço com remate nas pontas) */
+body[data-opcao="estaiada"] :is(.cx-rule, .c611-label-n::after) { background: var(--e1-laranja); height: 1px; }
+body[data-opcao="estaiada"] .cx-label, body[data-opcao="estaiada"] .c611-label { letter-spacing: .14em; }
+
+/* ---------- molduras: filete afastado, como a margem de uma prancha ---------- */
+body[data-opcao="estaiada"] :is(.c02-foto, .c611-bbb-foto, .c611-cor-folha, .c611-cida-foto, .c611-car-print) {
+  outline: 1px solid var(--e1-laranja); outline-offset: 7px;
+}
+body[data-opcao="estaiada"] .c611-tela { outline: none; }
+body[data-opcao="estaiada"] .c611-m { outline: 1px solid rgba(238, 241, 242, .22); outline-offset: -1px; }
+
+/* ---------- cabos atrás de cada capítulo (tema-estaiada.js) ---------- */
+body[data-opcao="estaiada"] :is(.cx, .c611) { isolation: isolate; }
+body[data-opcao="estaiada"] .e1-cabos { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: visible; }
+body[data-opcao="estaiada"] .e1-cabos line { stroke: var(--e1-laranja); stroke-width: 1; vector-effect: non-scaling-stroke; }
+body[data-opcao="estaiada"] .e1-cabos .e1-mastro { stroke: currentColor; opacity: .35; }
+
+/* ---------- prumo: régua fixa na margem que mede a leitura ---------- */
+body[data-opcao="estaiada"] .e1-prumo { position: fixed; left: 0; top: 0; bottom: 0; width: 28px; z-index: 50; pointer-events: none;
+  opacity: 0; transition: opacity .4s; color: var(--e1-tinta); mix-blend-mode: normal; }
+body[data-opcao="estaiada"] .e1-prumo.is-on { opacity: 1; }
+body[data-opcao="estaiada"] .e1-prumo-fio { position: absolute; left: 10px; top: 0; bottom: 0; width: 1px; background: var(--e1-fio); }
+body[data-opcao="estaiada"] .e1-prumo-k { position: absolute; left: 10px; top: 0; width: 1px; height: 100%; background: var(--e1-laranja); transform-origin: 0 0; transform: scaleY(0); }
+body[data-opcao="estaiada"] .e1-prumo-n { position: absolute; left: 6px; width: 9px; height: 1px; background: currentColor; opacity: .45; }
+body[data-opcao="estaiada"] .e1-prumo.is-escuro { color: var(--e1-papel); }
+body[data-opcao="estaiada"] .e1-prumo.is-escuro .e1-prumo-fio { background: rgba(238, 241, 242, .25); }
+@media (max-width: 760px) {
+  body[data-opcao="estaiada"] .e1-prumo { width: 10px; }
+  body[data-opcao="estaiada"] .e1-prumo-fio, body[data-opcao="estaiada"] .e1-prumo-k { left: 4px; }
+  body[data-opcao="estaiada"] .e1-prumo-n { left: 1px; width: 7px; }
+}
+
+/* botão de tela cheia na paleta da prancha */
+body[data-opcao="estaiada"] .tela-cheia { background: var(--e1-tinta); border-color: rgba(238, 241, 242, .55); color: var(--e1-papel); }
+body[data-opcao="estaiada"] .tela-cheia:hover, body[data-opcao="estaiada"] .tela-cheia:focus-visible { border-color: var(--e1-laranja-cl); color: var(--e1-laranja-cl); }
+body[data-opcao="estaiada"] :is(.cx, .c611) { position: relative; }
+
+/* o script compartilhado pinta "azular" de amarelo: aqui é o laranja de obra (3,4:1 no papel e 4,2:1 no aço, só em display) */
+body[data-opcao="estaiada"] .c611-car-display em { color: var(--e1-laranja) !important; }
+/* rodapé do contato: faixa de aço, como a legenda de uma prancha */
+body[data-opcao="estaiada"] .c611-rodape { background: var(--e1-tinta); color: var(--e1-papel); border-top-color: var(--e1-tinta); }
+/* "Top 10" tem letras: fica na grotesca leve, o número mono só onde é algarismo */
+body[data-opcao="estaiada"] .c611 p.c611-ficha-n--t { font-family: "Inter Tight", system-ui, sans-serif; font-weight: 300; letter-spacing: -.045em; }
+/* a grotesca leve é mais larga que a serifa: o título do método não pode encostar no desenho da sala */
+@media (min-width: 761px) and (max-width: 1280px) {
+  body[data-opcao="estaiada"] .c03-titulo { font-size: clamp(1.9rem, .9rem + 2.4vw, 3.1rem); max-width: 12ch; }
+}
+/* no celular o leque passa atrás do texto: mais discreto */
+@media (max-width: 760px) { body[data-opcao="estaiada"] .e1-cabos { opacity: .55; } }
+body[data-opcao="estaiada"] .c611-ficha-n--t * { font-family: inherit; letter-spacing: inherit; }
+body[data-opcao="estaiada"] .c611-ficha-n--t.e1-cota { background: none; }
+body[data-opcao="estaiada"] .c611 p.e1-palavra { font-family: "Inter Tight", system-ui, sans-serif; font-weight: 300; letter-spacing: -.05em; }
+
+/* cap. 03: foto inteira presa na prancha (sem recorte), com o filete laranja afastado; nunca maior que 820x1230 */
+body[data-opcao="estaiada"] img.c03-sofia.e1-sofa {
+  right: calc(var(--cx-pad) * .5); bottom: clamp(20px, 4vh, 48px);
+  height: min(calc(88% - 40px), 1230px); max-height: 1230px;
+  aspect-ratio: 820 / 1230; object-fit: cover;
+  outline: 1px solid var(--e1-laranja); outline-offset: 7px;
+  box-shadow: 0 0 0 1px var(--e1-tinta);
+}
+/* abaixo dos quadros 01 a 05 e acima do botão de tela cheia */
+body[data-opcao="estaiada"] .c03.is-pin img.c03-sofia.e1-sofa { height: min(61vh, 37vw, 1230px); right: clamp(72px, 6vw, 104px); bottom: 84px; }
+@media (max-width: 899px) {
+  body[data-opcao="estaiada"] img.c03-sofia.e1-sofa { right: 28px; bottom: 28px; width: min(46%, 240px); height: auto; max-height: calc(100% - 56px); }
+}
+
+/* ---------- volta 3: ficha de operação (cap. 08): coluna do número cabe o mono sem invadir a legenda ---------- */
+body[data-opcao="estaiada"] .c611-oper-l li { grid-template-columns: minmax(max-content, 2fr) minmax(0, 3fr); }
+body[data-opcao="estaiada"] .c611-oper-n { font-size: clamp(32px, 3.4vw, 56px); letter-spacing: -.07em; }
+@media (max-width: 760px) {
+  body[data-opcao="estaiada"] .c611-oper-l li { grid-template-columns: minmax(0, 1fr); }
+  body[data-opcao="estaiada"] .c611-oper-n { font-size: clamp(36px, 11vw, 48px); }
+}

@@ -106,7 +106,7 @@
   function c01(root) {
     gsap.from(root.querySelectorAll('.c01-tese .cx-line > span'), {
       yPercent: 112, duration: 1.4, ease: 'expo.out', stagger: .14,
-      scrollTrigger: { trigger: root.querySelector('.c01-tese'), start: 'top 80%', once: true }
+      scrollTrigger: { trigger: root.querySelector('.c01-tese'), start: 'top 98%', once: true }
     });
     drawOn(root.querySelector('.c01-estrutura'));
     reveal(root.querySelectorAll('.c01-lista li'), root.querySelector('.c01-lista'), { stagger: .12 });
@@ -128,10 +128,15 @@
         onUpdate: function () { el.textContent = Math.round(o.v); }
       });
     });
-    var foto = root.querySelector('.c02-foto img');
-    gsap.from(foto, { clipPath: 'inset(100% 0% 0% 0%)', scale: 1.08, duration: 1.6, ease: 'expo.out',
-      scrollTrigger: { trigger: foto, start: 'top 85%', once: true } });
-    reveal(root.querySelectorAll('.c02-texto > p'), root.querySelector('.c02-texto'));
+    reveal(root.querySelector('.c02-foto'), null, { y: 40 });
+    // trajetória: cada trecho do trilho cresce preso à rolagem; o marco acende ao ser alcançado
+    root.querySelectorAll('.c02-marco').forEach(function (li) {
+      gsap.fromTo(li, { '--p': 0 }, { '--p': 1, ease: 'none',
+        scrollTrigger: { trigger: li, start: 'top 70%', end: 'bottom 70%', scrub: true } });
+      ScrollTrigger.create({ trigger: li, start: 'top 70%', end: 'max', toggleClass: 'is-on' });
+      reveal(li.querySelectorAll(':scope > :not(.c02-no)'), li, { stagger: .06 });
+    });
+    reveal(root.querySelector('.c02-cred'));
     root.querySelectorAll('.c02-cad-lista li').forEach(function (li, i) {
       var svg = li.querySelector('svg');
       var img = svg.querySelector('image');
@@ -145,6 +150,10 @@
     gsap.from(root.querySelectorAll('.c02-marcas li'), {
       opacity: 0, y: 16, duration: 1, ease: 'expo.out', stagger: { each: .07, grid: 'auto', from: 'start' },
       scrollTrigger: { trigger: root.querySelector('.c02-marcas'), start: 'top 85%', once: true }
+    });
+    // toque (sem hover): a célula revela a cor oficial enquanto está no meio da tela
+    if (matchMedia('(hover: none)').matches) root.querySelectorAll('.c02-marcas li').forEach(function (li) {
+      ScrollTrigger.create({ trigger: li, start: 'top 70%', end: 'bottom 30%', toggleClass: 'is-cor' });
     });
   }
 

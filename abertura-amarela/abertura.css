@@ -18,7 +18,7 @@ body { font-family: var(--corpo, "Inter Tight", system-ui, sans-serif); overflow
 .topo a { pointer-events: auto; }
 .topo { transition: opacity .3s, visibility .3s; }
 .topo.abertura-passou { opacity: 0 !important; visibility: hidden !important; }
-.marca { font-family: var(--serifa, "Newsreader", Georgia, serif); font-weight: 500; font-variation-settings: "opsz" 36; font-size: clamp(19px, 1.6vw, 23px); letter-spacing: -0.012em; }
+.marca { font-family: var(--corpo, "Inter Tight", system-ui, sans-serif); font-weight: 600; font-size: clamp(18px, 1.5vw, 22px); letter-spacing: -0.035em; }
 .menu { display: flex; gap: clamp(18px, 2.4vw, 36px); font-size: 13px; letter-spacing: 0.01em; }
 .menu a, .marca { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; }
 .menu a { min-width: 44px; }
@@ -54,8 +54,8 @@ body { font-family: var(--corpo, "Inter Tight", system-ui, sans-serif); overflow
 @keyframes fio { 0% { transform: scaleY(0); } 55% { transform: scaleY(1); } 100% { transform: scaleY(1); opacity: 0; } }
 
 .titulo {
-  font-family: var(--serifa, "Newsreader", Georgia, serif); font-weight: 500; font-variation-settings: "opsz" 72;
-  letter-spacing: -0.02em; line-height: 1.04; text-wrap: balance;
+  font-family: var(--corpo, "Inter Tight", system-ui, sans-serif); font-weight: 600;
+  letter-spacing: -0.05em; line-height: .96; text-wrap: balance;
 }
 .titulo-1, .titulo-2 { position: absolute; z-index: 5; left: var(--gutter); }
 .titulo-1 { top: 36%; transform: translateY(-50%); font-weight: 600; font-size: clamp(40px, 6.9vw, 112px); line-height: 1.0; }

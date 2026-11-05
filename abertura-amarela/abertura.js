@@ -11,7 +11,8 @@
   const NAVY = '#14213D';
   // caminho dos assets relativo a este script: funciona isolado e dentro de amarelo.html
   const BASE = document.currentScript ? document.currentScript.src.replace(/[^/]*$/, '') : '';
-  const pronta = () => document.dispatchEvent(new Event('abertura:pronta'));
+  // aviso numa tarefa própria: os capítulos montam depois, sem somar ao fim da montagem da abertura
+  const pronta = () => setTimeout(() => document.dispatchEvent(new Event('abertura:pronta')), 0);
 
   const sec = document.querySelector('.abertura');
   const cv = sec.querySelector('.malha');
@@ -51,9 +52,15 @@
   const bucketOf = t => Math.max(0, Math.min(NB - 1, (t * NB) | 0));
 
   // ---------- amostragem da foto ----------
-  function sample(img) {
+  // em fatias de ~40 ms: a amostragem leva 1 a 2 s e, inteira, travava a página no carregamento
+  let t0 = 0;
+  const cede = () => new Promise(r => (window.scheduler && scheduler.yield ? scheduler.yield().then(r) : setTimeout(r, 0)))
+    .then(() => { t0 = performance.now(); });
+  const passou = () => performance.now() - t0 > 40;
+  async function sample(img) {
+    t0 = performance.now();
     const c = document.createElement('canvas'); c.width = W; c.height = H;
-    const x = c.getContext('2d'); x.drawImage(img, 0, 0);
+    const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(img, 0, 0, W, H);   // fonte em qualquer resolução, amostrada em 820 x 1230
     const px = x.getImageData(0, 0, W, H).data;
     const lum = new Float32Array(W * H), person = new Uint8Array(W * H);
     for (let i = 0, j = 0; i < W * H; i++, j += 4) {
@@ -61,6 +68,7 @@
       lum[i] = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
       person[i] = px[j + 3] > 128 && !(b > r + 4 && lum[i] < 0.45) ? 1 : 0;   // tira a poltrona
     }
+    if (passou()) await cede();
     // tom equilibrado antes de amostrar: tira a luz de baixa frequência (lado da sombra
     // na bochecha e no pescoço) e mantém o detalhe local (olhos, sobrancelhas, lábios)
     const box = (src, r) => {                                  // desfoque de caixa separável
@@ -85,7 +93,9 @@
     };
     const pm = new Float32Array(W * H), pl = new Float32Array(W * H);
     for (let i = 0; i < W * H; i++) { pm[i] = person[i]; pl[i] = person[i] * lum[i]; }
-    const bm = box(pm, 30), bl = box(pl, 30);
+    const bm = box(pm, 30); if (passou()) await cede();
+    const bl = box(pl, 30); if (passou()) await cede();
+    performance.mark('abertura:tom');
     const tone = new Float32Array(W * H);
     for (let i = 0; i < W * H; i++) {
       const low = bm[i] > 0 ? bl[i] / bm[i] : lum[i];
@@ -113,6 +123,7 @@
     const k = mobile ? 1.25 : 1;
     let guard = 0;
     while (guard++ < (mobile ? 6e5 : 1.2e6)) {
+      if (!(guard & 2047) && passou()) await cede();
       const xx = rnd(), yy = (1 + Math.random() * (H - 2)) | 0, i = yy * W + xx;
       if (!person[i]) continue;
       const fe = faceE(xx, yy);
@@ -124,6 +135,7 @@
     // poeira em volta da cabeça (some quando a malha fecha)
     const nd = mobile ? 160 : 320;
     for (let n = 0, g2 = 0; n < nd && g2++ < 2e6;) {
+      if (!(g2 & 8191) && passou()) await cede();
       const xx = 2 + (Math.random() * (W - 4)) | 0, yy = 2 + (Math.random() * 700) | 0, i = yy * W + xx;
       if (!person[i] || (person[i - 3] && person[i + 3] && person[i - 3 * W])) continue;
       const a = Math.random() * Math.PI * 2, d = 6 + Math.random() * 60;
@@ -131,8 +143,9 @@
       n++;
     }
     // camada 2 (pontilhado de gravura): muitos pontos finos; o rosto recebe quase tudo
-    const stip = (n, test, wf) => {
+    const stip = async (n, test, wf) => {
       for (let c = 0, g3 = 0; c < n && g3++ < 1.5e7;) {
+        if (!(g3 & 8191) && passou()) await cede();
         const xx = rnd(), yy = (1 + Math.random() * 1000) | 0, i = yy * W + xx;
         if (!person[i] || !test(xx, yy)) continue;
         const [w, dk] = wf(i, xx, yy);
@@ -141,13 +154,13 @@
         c++;
       }
     };
-    stip(mobile ? 16000 : 52000, (xx, yy) => faceE(xx, yy) < 1.6, (i, xx, yy) => {
+    await stip(mobile ? 16000 : 52000, (xx, yy) => faceE(xx, yy) < 1.6, (i, xx, yy) => {
       const dk = Math.min(1, Math.max(0, (0.7 - tone[i]) / 0.4));
       const fall = faceE(xx, yy) < 1 ? 1 : 0.45;
       const hair = lum[i] < 0.2 ? 0.35 : 1;                                   // cabelo mais leve, como na gravura
       return [fall * hair * (0.01 + Math.pow(dk, 2.2) + 0.3 * edge(i)), dk];
     });
-    stip(mobile ? 5000 : 14000, (xx, yy) => faceE(xx, yy) >= 1.6, (i) => {
+    await stip(mobile ? 5000 : 14000, (xx, yy) => faceE(xx, yy) >= 1.6, (i) => {
       const dk = Math.min(1, Math.max(0, (0.8 - tone[i]) / 0.6));
       return [0.06 + 0.7 * dk * dk + 0.5 * edge(i), dk];
     });
@@ -235,7 +248,7 @@
     for (let k = cacheN * 6, e = n * 6; k < e; k += 6) {
       cachex.moveTo(revV[k], revV[k + 1]); cachex.lineTo(revV[k + 2], revV[k + 3]); cachex.lineTo(revV[k + 4], revV[k + 5]); cachex.closePath();
     }
-    cachex.clip(); cachex.drawImage(photo, 0, 0); cachex.restore();
+    cachex.clip(); cachex.drawImage(photo, 0, 0, W, H); cachex.restore();
     cacheN = n;
   }
 
@@ -422,10 +435,10 @@
     svg.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
   }
 
-  function setup(img) {
+  async function setup(img) {
     photo = img;
     sil = document.createElement('canvas'); sil.width = W; sil.height = H;
-    const sx = sil.getContext('2d'); sx.drawImage(img, 0, 0);
+    const sx = sil.getContext('2d', { willReadFrequently: true }); sx.drawImage(img, 0, 0, W, H);
     const sd = sx.getImageData(0, 0, W, H), q = sd.data, isSofa = new Uint8Array(W * H);   // só a pessoa (o sofá entra pela foto)
     for (let j = 0; j < q.length; j += 4) {
       const l = (0.2126 * q[j] + 0.7152 * q[j + 1] + 0.0722 * q[j + 2]) / 255;
@@ -433,17 +446,26 @@
       q[j] = 242; q[j + 1] = 194; q[j + 2] = 48;
     }
     sx.putImageData(sd, 0, 0);
-    pts = sample(img);
+    await cede();
+    performance.mark('abertura:amostra');
+    pts = await sample(img);
+    await cede();
+    performance.mark('abertura:malha');
     segB = link(pts);
+    await cede();
     revealTris((x, y) => !(x < 400 && y > 920) && isSofa[Math.min(H - 1, y | 0) * W + Math.min(W - 1, x | 0)]);   // calça preta não conta como sofá
     ptB = Array.from({ length: NB }, () => []);
     for (const p of pts) ptB[p.b].push(p);
-    cache = document.createElement('canvas'); cache.width = W; cache.height = H; cachex = cache.getContext('2d');
+    await cede();
+    cache = document.createElement('canvas'); cache.width = img.naturalWidth; cache.height = img.naturalHeight; cachex = cache.getContext('2d');
+    cachex.setTransform(img.naturalWidth / W, 0, 0, img.naturalHeight / H, 0, 0);   // cache na resolução da foto, clipe em coordenadas 820 x 1230
+    await cede();
     try { initGL(); } catch (e) { console.warn('[sofia] WebGL:', e); gl = null; }
     // contexto perdido no celular: a mesma malha segue no canvas 2D
     if (gl) U.canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); gl = null; U.canvas.remove(); render(); });
 
     resize(); room();
+    await cede();
 
     const struct = () => svg.querySelectorAll('path[pathLength]:not(.det)');
     const det = () => svg.querySelectorAll('path.det');
@@ -474,10 +496,12 @@
         scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + (vh * 2.4), pin: true, scrub: 0.6, invalidateOnRefresh: true,
           onLeave: () => topo && topo.classList.add('abertura-passou'), onEnterBack: () => topo && topo.classList.remove('abertura-passou') },
       });
-      tl.to(state, { scat: 0, duration: 0.16, ease: 'power2.out' }, 0.02)
-        .to(state, { k: 1, duration: 0.36, ease: 'power2.inOut' }, 0.04)
-        .to(state, { d: 1, duration: 0.4 }, 0.26)
-        .to(state, { k: 2, duration: 0.32, ease: 'power2.inOut' }, 0.54)
+      // fromTo com valores explícitos: um refresh no meio da rolagem (imagem lazy, fonte) não regrava o início
+      Object.assign(state, { k: 0, scat: 1, d: 0 });
+      tl.fromTo(state, { scat: 1 }, { scat: 0, duration: 0.16, ease: 'power2.out', immediateRender: false }, 0.02)
+        .fromTo(state, { k: 0 }, { k: 1, duration: 0.36, ease: 'power2.inOut', immediateRender: false }, 0.04)
+        .fromTo(state, { d: 0 }, { d: 1, duration: 0.4, immediateRender: false }, 0.26)
+        .fromTo(state, { k: 1 }, { k: 2, duration: 0.32, ease: 'power2.inOut', immediateRender: false }, 0.54)
         .to('.dica', { autoAlpha: 0, y: 10, duration: 0.05 }, 0.01)
         .fromTo('.titulo-2', { autoAlpha: 0, y: 30 }, { autoAlpha: 1, y: 0, duration: 0.1, ease: 'expo.out' }, 0.74)
         .to(gsap.utils.toArray(struct()), { strokeDashoffset: 0, duration: 0.1, stagger: { amount: 0.12 } }, 0.24)
@@ -485,8 +509,22 @@
         .to({}, { duration: 0.06 }, 0.94);
       if (prog) tl.scrollTrigger.scroll(tl.scrollTrigger.start + prog * (tl.scrollTrigger.end - tl.scrollTrigger.start));
       render();
+      // WebKit descarta o desenho WebGL feito fora de um quadro: repete no próximo, senão o topo abre vazio
+      requestAnimationFrame(() => requestAnimationFrame(render));
     };
+    performance.mark('abertura:pin');
     build();
+    performance.mark('abertura:pronta');
+    window.__abTL = () => tl;   // conferência
+    // refresh (imagem lazy, fonte, resize) volta a timeline ao início para medir; com scrub ela
+    // reanimaria do zero e o rosto em malha piscaria por cima da foto. Depois do refresh, vai direto ao ponto certo.
+    const acerta = () => {
+      const st = tl && tl.scrollTrigger; if (!st) return;
+      const tw = st.getTween && st.getTween(); if (tw) tw.progress(1);
+      const p = st.progress;   // a mesma progressão não renderiza de novo: passa por outro ponto e volta
+      tl.progress(p > 0.5 ? 0 : 1, true).progress(p); render();
+    };
+    ScrollTrigger.addEventListener('refresh', () => { acerta(); requestAnimationFrame(acerta); });
     pronta();
     let rt;
     addEventListener('resize', () => {
@@ -496,7 +534,7 @@
   }
 
   const img = new Image();
-  img.onload = () => setup(img);
+  img.onload = () => setup(img).catch(e => { console.error('[sofia] abertura:', e); pronta(); });
   img.onerror = () => { console.error('[sofia] foto da abertura não carregou'); pronta(); };
   img.src = BASE + 'assets/sofia-recorte.webp';
 })();

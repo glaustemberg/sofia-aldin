@@ -107,7 +107,7 @@
         float tr=smoothstep(0.,.14,uLin*1.3-(.72*v.y+.28*k));
         vec4 lc=texture2D(uLinhas,v);
         float la=lc.a*tr*(1.-smoothstep(k+w*.5,k+w+.06,uRev));
-        vec3 c=mix(vec3(.0667,.0745,.0824),texture2D(uFoto,v).rgb,f);
+        vec3 c=mix(vec3(.0588,.1412,.2),texture2D(uFoto,v).rgb,f);
         gl_FragColor=vec4(mix(c,lc.rgb,la),1.); // cor do traço vem do desenho: marfim na figura, #F3F3F0 na cena
       }`;
     const sh = (t, src) => { const s = gl.createShader(t); gl.shaderSource(s, src); gl.compileShader(s); return s; };
@@ -166,7 +166,7 @@
     const nova = () => { const c = document.createElement('canvas'); c.width = cw; c.height = ch; return c; };
     figA = nova(); figP = nova();
     const g = figA.getContext('2d');
-    g.strokeStyle = '#EDE4CF'; g.lineWidth = 0.65 * dpr;
+    g.strokeStyle = '#EEF1F2'; g.lineWidth = 0.65 * dpr;
     malha.forEach((lista, b) => {
       if (!lista.length) return;
       g.globalAlpha = (b + 0.5) / 8;
@@ -182,7 +182,7 @@
 
   function pontos(g, alfa, off, dx, dy, passo) {
     const sz = Math.max(1, 0.8 * dpr);
-    g.fillStyle = '#EDE4CF'; // marfim quente, como as arestas
+    g.fillStyle = '#EEF1F2'; // papel frio, como as arestas
     faixas.forEach((lista, b) => { // um alfa por faixa: o canvas agrupa os retângulos
       g.globalAlpha = alfa * (b + 0.5) / NF;
       if (g.globalAlpha < 0.03) return;
@@ -311,7 +311,7 @@
 
   /* ---------- rolagem: construção e passagem ---------- */
   function rolagem() {
-    gsap.set('.legenda', { autoAlpha: 0, y: 14 });
+    gsap.set(['.legenda', '.cena-leg'], { autoAlpha: 0, y: 14 });
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.abertura', pin: palco, start: 'top top', end: () => '+=' + innerHeight * (mobile ? 2.6 : 3.0), scrub: 1.1, anticipatePin: 1, invalidateOnRefresh: true }
@@ -321,13 +321,16 @@
       .to(S, { reveal: 1, duration: 3.4, ease: 'none' }, 0.2)
       .to(S, { cs: 1, duration: 2, ease: 'power2.inOut' }, 0.8)
       .to('.legenda', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 1.6)
+      .to('.cena-leg', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 2.6)
+      .to('.cena-leg', { autoAlpha: 0, duration: .4 }, 4.1)
       .to(S, { grid: 1, duration: 1.6, ease: 'power1.inOut' }, 1.8)
       // pausa curta no estado r2-03; os cabos descem e viram a grade sobre o amarelo
       .to(S, { morph: 1, duration: 1.4, ease: 'none' }, 4.0)
       .to(S, { fall: 1, duration: .6, ease: 'power1.in' }, 4.0)
       .to(S, { curtain: 1, duration: 1.3, ease: 'power2.inOut' }, 4.3)
-      .to(nav, { color: '#14213D', duration: 0.2 }, 4.35)
-      .to({}, { duration: 0.2 }, 5.4);
+      .to(nav, { color: '#0F2433', duration: 0.2 }, 4.35)
+      .from('.carimbo', { yPercent: 40, autoAlpha: 0, duration: 0.7, ease: 'power2.out' }, 4.9)
+      .to({}, { duration: 0.3 }, 5.6);
   }
 
   function gancho() {
