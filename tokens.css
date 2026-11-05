@@ -1,0 +1,54 @@
+/* Tokens comuns do site Sofia Aldin. As peças leem estes nomes (com fallback para funcionarem isoladas).
+   Fontes: o <link> único do Google Fonts fica no <head> de cada página. */
+:root {
+  /* cores */
+  --grafite: #111315;
+  --linha: #F3F3F0;
+  --amarelo: #F2C230;
+  --marinho: #14213D;
+  --branco: #FFFFFF;
+  --preto: #0E0E0E;
+  --cobalto: #1D3FD6;
+
+  /* fontes */
+  --serifa: "Newsreader", Georgia, serif;
+  --corpo: "Inter Tight", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* escala de texto */
+  --t-rotulo: 12px;
+  --t-corpo: clamp(16px, 1.05vw, 18px);
+  --t-lead: clamp(18px, 1.4vw, 22px);
+  --t-h3: clamp(20px, 1.6vw, 24px);
+  --t-h2: clamp(38px, 5.4vw, 84px);
+  --t-display: clamp(44px, 7vw, 120px);
+
+  /* espaço */
+  --e-1: 8px;
+  --e-2: 16px;
+  --e-3: 24px;
+  --e-4: 40px;
+  --e-5: 64px;
+  --e-6: 96px;
+  --e-7: 160px;
+
+  /* rótulo de capítulo */
+  --rotulo-tracking: .1em;
+  --rotulo-fio: 56px;
+  --rotulo-gap: 14px;
+}
+
+/* Rótulo de capítulo uniforme (01 a 11): IBM Plex Mono, número, fio e nome.
+   Este arquivo entra depois das peças, então estas regras vencem as das peças. */
+.cx-label,
+.c611-label:has(> .c611-label-n) {
+  font-family: var(--mono);
+  font-size: var(--t-rotulo);
+  font-weight: 500;
+  letter-spacing: var(--rotulo-tracking);
+  text-transform: uppercase;
+  gap: var(--rotulo-gap);
+}
+.cx-num, .c611-label-n { font-variant-numeric: tabular-nums; }
+.c611-label-n { gap: var(--rotulo-gap); }
+.cx-rule, .c611-label-n::after { width: var(--rotulo-fio); }

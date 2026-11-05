@@ -1,0 +1,258 @@
+/* Capítulos 1 a 4 · Sofia Aldin. Tudo prefixado .cx / .c01 a .c04 */
+.cx {
+  --cx-amarelo: var(--amarelo, #F2C230);
+  --cx-azul: var(--marinho, #14213D);
+  --cx-branco: var(--branco, #FFFFFF);
+  --cx-serif: var(--serifa, "Newsreader", Georgia, serif);
+  --cx-sans: var(--corpo, "Inter Tight", system-ui, sans-serif);
+  --cx-mono-f: var(--mono, "IBM Plex Mono", ui-monospace, monospace);
+  --cx-pad: clamp(20px, 5vw, 80px);
+  --cx-ease: cubic-bezier(.16, 1, .3, 1);
+  position: relative;
+  background: var(--cx-amarelo);
+  color: var(--cx-azul);
+  font-family: var(--cx-sans);
+  font-size: clamp(1rem, .95rem + .25vw, 1.125rem);
+  line-height: 1.55;
+  overflow-x: clip;
+}
+.cx *, .cx *::before, .cx *::after { box-sizing: border-box; }
+.cx :where(h2, h3, p, ul, ol, dl, dd, figure, blockquote) { margin: 0; padding: 0; }
+.cx :where(ul, ol) { list-style: none; }
+.cx :where(h2, h3) { text-wrap: balance; font-weight: 400; }
+.cx p, .cx dd { text-wrap: pretty; }
+.cx em { font-style: italic; }
+.cx-wrap { max-width: 1440px; margin: 0 auto; padding: clamp(96px, 14vh, 160px) var(--cx-pad); }
+
+/* rótulos */
+.cx-mono, .cx-label {
+  font-family: var(--cx-mono-f);
+  font-size: .75rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.cx-label { display: flex; align-items: center; gap: 14px; margin-bottom: clamp(40px, 7vh, 80px); }
+.cx-rule { display: block; width: 56px; height: 1px; background: currentColor; }
+.cx-num { font-variant-numeric: tabular-nums; }
+
+/* desenho em linha */
+.cx-draw { display: block; width: 100%; height: auto; overflow: visible; }
+.cx-draw :is(path, circle, rect, line) { fill: none; stroke: var(--cx-azul); stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
+.cx-draw .cx-fine { stroke-width: .75; opacity: .7; }
+.cx-draw .cx-dash { stroke-dasharray: 3 4; }
+
+/* máscara de linha de texto */
+.cx-line { display: block; overflow: hidden; padding-bottom: .08em; }
+.cx-line > span { display: block; }
+
+/* ================= 01 ================= */
+.c01-abre { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: clamp(24px, 4vw, 80px); align-items: end; }
+.c01-estrutura { max-width: 440px; justify-self: end; }
+.cx-draw .c01-modulo { stroke-width: 2; }
+.c01-tese {
+  font-family: var(--cx-serif);
+  font-size: clamp(2.35rem, 1.2rem + 5.4vw, 6.6rem);
+  line-height: 1.02;
+  letter-spacing: -.025em;
+  max-width: 15ch;
+}
+.c01-tese .cx-line + .cx-line { margin-top: .12em; }
+.c01-sintomas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 120px);
+  margin-top: clamp(64px, 10vh, 120px);
+  align-items: end;
+}
+.c01-lista li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  padding: 18px 0;
+  border-top: 1px solid var(--cx-azul);
+  font-size: clamp(1.05rem, 1rem + .3vw, 1.25rem);
+}
+.c01-lista li:last-child { border-bottom: 1px solid var(--cx-azul); }
+.c01-lista .cx-mono { padding-top: .35em; }
+.c01-conclusao {
+  font-family: var(--cx-serif);
+  font-style: italic;
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.4rem);
+  line-height: 1.18;
+  letter-spacing: -.01em;
+}
+.c01-perfis {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: clamp(80px, 12vh, 140px);
+  border-top: 1px solid var(--cx-azul);
+}
+.c01-perfil { padding: 40px clamp(16px, 2.4vw, 40px) 8px; border-left: 1px solid var(--cx-azul); }
+.c01-perfil:first-child { border-left: 0; padding-left: 0; }
+.c01-perfil:last-child { padding-right: 0; }
+.c01-perfil svg { max-width: 260px; margin-bottom: 32px; }
+.c01-perfil h3 { font-family: var(--cx-serif); font-size: clamp(1.45rem, 1.1rem + 1vw, 2rem); line-height: 1.1; margin: 10px 0 14px; letter-spacing: -.01em; }
+.c01-perfil p:last-child { max-width: 34ch; }
+
+/* ================= 02 ================= */
+.c02-topo { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+.c02-titulo { font-family: var(--cx-serif); font-size: clamp(2.6rem, 1.2rem + 6vw, 7.4rem); line-height: .98; letter-spacing: -.03em; }
+.c02-contadores { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--cx-azul); }
+.c02-contadores > div { padding: 18px 0 0; }
+.c02-contadores > div + div { border-left: 1px solid var(--cx-azul); padding-left: 20px; }
+.cx-big { font-family: var(--cx-serif); font-size: clamp(4rem, 2.4rem + 5vw, 8.5rem); line-height: .9; letter-spacing: -.04em; font-variant-numeric: lining-nums tabular-nums; }
+.c02-contadores dd { font-size: .95rem; margin-top: 12px; max-width: 22ch; }
+
+.c02-bio { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 120px); margin-top: clamp(72px, 11vh, 140px); align-items: start; }
+.c02-foto-moldura { border: 1px solid var(--cx-azul); padding: 12px; }
+.c02-foto img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 18%; }
+.c02-foto figcaption { margin-top: 12px; }
+.c02-texto { display: grid; gap: 1.1em; font-size: clamp(1.05rem, 1rem + .3vw, 1.3rem); line-height: 1.6; max-width: 40em; padding-top: 8px; }
+.c02-texto p:first-child::first-line { font-weight: 500; }
+.c02-cred { padding-top: 20px; border-top: 1px solid var(--cx-azul); margin-top: 1em; line-height: 1.7; }
+
+.c02-cadeiras { margin-top: clamp(96px, 14vh, 180px); }
+.c02-cad-lista { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--cx-azul); border-bottom: 1px solid var(--cx-azul); }
+.c02-cad-lista li { padding: 40px clamp(12px, 2vw, 32px) 28px; text-align: center; }
+.c02-cad-lista li + li { border-left: 1px solid var(--cx-azul); }
+.c02-cad-lista svg { max-width: 260px; margin: 0 auto 20px; }
+.c02-cad-lista h3 { font-family: var(--cx-serif); font-size: clamp(1.4rem, 1rem + 1.2vw, 2.2rem); margin-top: 6px; }
+.c02-frase { margin-top: clamp(48px, 8vh, 96px); text-align: center; }
+.c02-frase p { font-family: var(--cx-serif); font-size: clamp(1.75rem, 1rem + 2.8vw, 3.6rem); line-height: 1.1; letter-spacing: -.015em; text-wrap: balance; max-width: 24ch; margin: 0 auto; }
+
+.c02-marcas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--cx-azul);
+  border: 1px solid var(--cx-azul);
+  margin-top: clamp(96px, 14vh, 160px);
+}
+.c02-marcas li {
+  background: var(--cx-amarelo);
+  min-height: clamp(120px, 16vw, 200px);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  text-align: center;
+  font-family: var(--cx-serif);
+  font-size: clamp(1.25rem, .9rem + 1.6vw, 2.6rem);
+  letter-spacing: .04em;
+  line-height: 1.05;
+  transition: background-color .5s var(--cx-ease), color .5s var(--cx-ease);
+}
+.c02-marcas li:hover { background: var(--cx-azul); color: var(--cx-amarelo); }
+
+/* ================= 03 ================= */
+/* base (celular, sem JS ou com movimento reduzido): cena + etapas em fluxo */
+.c03-palco { position: relative; display: flex; flex-direction: column; padding: clamp(72px, 10vh, 120px) var(--cx-pad) clamp(56px, 8vh, 96px); }
+.c03-esq { position: relative; z-index: 3; order: -1; }
+.c03-cabeca .cx-label { margin-bottom: 28px; }
+.c03-titulo { font-family: var(--cx-serif); font-weight: 600; font-size: clamp(2.1rem, 1.2rem + 2.4vw, 3.6rem); line-height: 1.03; letter-spacing: -.022em; max-width: 14ch; }
+.c03-progresso { display: none; align-items: center; gap: 10px; margin-top: 24px; }
+.c03-barra { display: block; flex: 0 0 120px; height: 1px; background: rgba(20, 33, 61, .3); position: relative; }
+.c03-barra i { position: absolute; inset: 0; background: var(--cx-azul); transform-origin: left; transform: scaleX(.2); }
+.c03-alvo { display: none; }
+.c03-cena { position: relative; height: min(120vw, 560px); margin: 24px calc(-1 * var(--cx-pad)) 40px; overflow: hidden; }
+.c03-sala { position: absolute; inset: 0; width: 100%; height: 100%; }
+.c03-sala .c03-longe { opacity: .45; }
+.c03-sala text { font-family: var(--cx-serif); font-weight: 500; fill: var(--cx-azul); stroke: none; }
+.c03-q path:first-child { stroke-width: 1.6; }
+.c03-q :is(path, text) { transition: opacity .6s var(--cx-ease); }
+.c03-q.is-open :is(path, text) { opacity: .22; }
+.c03-sofia { position: absolute; right: -6%; bottom: 0; height: 88%; width: auto; max-width: none; z-index: 2; }
+/* opção amarela: a abertura já termina com a Sofia no sofá; aqui a poltrona espera vazia, em linha */
+.c03-poltrona { display: none; position: absolute; right: -6%; bottom: 0; height: 88%; width: auto; aspect-ratio: 820 / 1230; z-index: 2; overflow: visible; }
+.c03-poltrona path { fill: none; stroke: var(--cx-azul); stroke-width: 1.25; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.c03-poltrona .c03-p-fina { stroke-width: .7; }
+[data-opcao="amarela"] .c03-sofia { display: none; }
+[data-opcao="amarela"] .c03-poltrona { display: block; }
+.c03-etapas { display: grid; gap: 24px; position: relative; z-index: 4; }
+.c03-etapa {
+  background: var(--cx-amarelo);
+  border: 1px solid var(--cx-azul);
+  box-shadow: inset 0 0 0 7px var(--cx-amarelo), inset 0 0 0 8px var(--cx-azul);
+}
+.c03-in { padding: clamp(28px, 2.6vw, 44px); }
+.c03-n { font-family: var(--cx-serif); font-weight: 500; font-size: clamp(2.8rem, 2rem + 2.4vw, 4.4rem); line-height: .9; letter-spacing: -.03em; display: block; }
+.c03-etapa h3 { font-family: var(--cx-serif); font-weight: 500; font-size: clamp(1.45rem, 1.1rem + .9vw, 2rem); line-height: 1.1; margin: 14px 0 12px; }
+.c03-etapa p { max-width: 42ch; }
+
+/* desktop com movimento: palco fixo, quadro cresce até virar painel */
+.c03.is-pin .c03-palco { height: 100vh; height: 100svh; padding: 0; overflow: hidden; }
+.c03.is-pin .c03-cena { position: absolute; inset: 0; height: auto; margin: 0; }
+.c03.is-pin :is(.c03-sofia, .c03-poltrona) { right: -1.5vw; height: max(53.7vw, 85.9vh); }
+.c03.is-pin .c03-esq { position: absolute; left: var(--cx-pad); top: clamp(64px, 10vh, 112px); bottom: 6vh; width: min(33vw, 480px); display: flex; flex-direction: column; }
+.c03.is-pin .c03-progresso { display: flex; }
+.c03.is-pin .c03-alvo { display: block; flex: 0 0 auto; height: clamp(320px, 44vh, 420px); margin-top: auto; }
+.c03.is-pin .c03-etapas { display: block; position: static; }
+.c03.is-pin .c03-etapa { position: absolute; left: 0; top: 0; overflow: hidden; z-index: 4; }
+.c03.is-pin .c03-in { position: absolute; left: 0; top: 0; }
+
+/* ================= 04 ================= */
+.c04 { --cx-azul: #F3F3F0; --cx-branco: #14213D; background: #14213D; color: #F3F3F0; }
+.c04-obra { position: relative; padding: clamp(56px, 9vh, 120px) 0 clamp(130px, 18vh, 220px); margin: 0 calc(-.5 * var(--cx-pad)); }
+.c04-andaime { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.c04-andaime :is(line, rect) { stroke: var(--cx-azul); stroke-width: 1; fill: none; }
+.c04-andaime .c04-a-brac rect, .c04-andaime .c04-a-chapa { fill: var(--cx-branco); }
+.c04-andaime .c04-a-x { stroke-width: .9; opacity: .75; }
+.c04-andaime .c04-a-guarda { opacity: .5; }
+.c04-frase {
+  position: relative;
+  font-family: var(--cx-serif);
+  font-weight: 500;
+  font-size: clamp(3.1rem, .6rem + 9.6vw, 11.5rem);
+  line-height: 1.3;
+  letter-spacing: -.035em;
+  padding: 0 calc(.5 * var(--cx-pad));
+  text-wrap: balance;
+}
+.c04-duas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 120px); margin-top: clamp(72px, 11vh, 140px); align-items: start; }
+.c04-corpo { font-size: clamp(1.05rem, 1rem + .3vw, 1.3rem); line-height: 1.6; max-width: 36em; }
+.c04-destaque { font-family: var(--cx-serif); font-style: italic; font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem); line-height: 1.15; border-left: 1px solid var(--cx-azul); padding-left: clamp(20px, 3vw, 48px); }
+.c04-plano { margin-top: clamp(96px, 14vh, 160px); border-top: 1px solid var(--cx-azul); padding-top: clamp(40px, 6vh, 72px); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 120px); }
+.c04-plano-t { font-family: var(--cx-serif); font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3.6rem); line-height: 1.05; letter-spacing: -.02em; grid-row: span 2; }
+.c04-tripe { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--cx-azul); }
+.c04-tripe li { padding: 18px 16px 22px; font-family: var(--cx-serif); font-size: clamp(1.15rem, .9rem + .8vw, 1.6rem); display: grid; gap: 28px; }
+.c04-tripe li + li { border-left: 1px solid var(--cx-azul); }
+.c04-fecho {
+  margin-top: clamp(96px, 14vh, 180px);
+  font-family: var(--cx-serif);
+  font-size: clamp(1.9rem, 1rem + 3.4vw, 4.6rem);
+  line-height: 1.06;
+  letter-spacing: -.02em;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+/* ================= responsivo ================= */
+@media (max-width: 899px) {
+  .c01-estrutura { max-width: 300px; justify-self: start; margin-top: 24px; }
+  .c01-abre, .c01-sintomas, .c02-topo, .c02-bio, .c04-duas, .c04-plano { grid-template-columns: minmax(0, 1fr); }
+  .c01-perfis { grid-template-columns: minmax(0, 1fr); border-top: 0; }
+  .c01-perfil, .c01-perfil:first-child { border-left: 0; border-top: 1px solid var(--cx-azul); padding: 32px 0 40px; }
+  .c01-perfil svg { max-width: 220px; }
+  .c02-foto { max-width: 420px; }
+  .c02-cad-lista { grid-template-columns: minmax(0, 1fr); }
+  .c02-cad-lista li + li { border-left: 0; border-top: 1px solid var(--cx-azul); }
+  .c02-cad-lista svg { max-width: 170px; }
+  .c02-marcas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .c04-plano-t { grid-row: auto; }
+}
+@media (max-width: 480px) {
+  .c02-contadores { grid-template-columns: minmax(0, 1fr); }
+  .c02-contadores > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--cx-azul); margin-top: 18px; }
+  .c04-tripe { grid-template-columns: minmax(0, 1fr); }
+  .c04-tripe li { grid-template-columns: 40px 1fr; gap: 8px; align-items: baseline; }
+  .c04-tripe li + li { border-left: 0; border-top: 1px solid var(--cx-azul); }
+  .c02-marcas li { font-size: 1rem; letter-spacing: .02em; padding: 16px 10px; }
+  .c04-frase { font-size: 2.4rem; }
+}
+@media (max-width: 900px) {
+  .cx-mono { font-size: .875rem; }
+  .c02-contadores dd { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cx *, .cx *::before, .cx *::after { transition: none !important; animation: none !important; }
+}
