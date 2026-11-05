@@ -1,221 +1,160 @@
-/* Abertura opção 3 · texto em pontos que monta o rosto, bloco à esquerda, fotos em camadas. Prefixo am3- */
+/* Abertura opção 3 (v11): título em pontos que traça as caixas na grade de 12 colunas, fotos que se
+   preenchem por células, grade que se reorganiza, planos chapados azul-marinho e amarelo, faixa dos cases,
+   match cut do sofá para o amarelo do capítulo 1. Prefixo am3-. Posições e tamanhos vêm de malha.js. */
 .am3-body { margin: 0; background: #111315; overflow-x: hidden; }
 
 .am3 {
   --am3-fundo: #111315;
   --am3-tinta: #F3F3F0;
-  --am3-linha: #F3F3F0;
-  --am3-bl: 0;      /* quantas linhas do bloco já entraram (o JS anima) */
-  --am3-bs: 0;      /* saída do bloco, 0 a 1 */
+  --am3-amarelo: #F2C230;
+  --am3-azul: #14213D;
   position: relative;
   font-family: "Inter Tight", system-ui, sans-serif;
   color: var(--am3-tinta);
 }
-
 .am3-palco {
-  position: relative;
+  position: relative; width: 100%;
   height: 100vh; height: 100svh;
-  width: 100%;
   overflow: hidden;
   background: var(--am3-fundo);
 }
 
-.am3-passagem {
-  position: absolute; inset: 0; z-index: 0;
-  background: #F2C230;
-  clip-path: inset(100% 0 0 0);
+.am3-mono, .am3-num-l, .am3-pilares li, .am3-menu a, .am3-role, .am3-medida {
+  font-family: "IBM Plex Mono", ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase;
 }
+.am3-am { color: var(--am3-amarelo); }
 
-/* ---------- cena de fotos ---------- */
-.am3-cena { position: absolute; inset: 0; z-index: 1; visibility: hidden; }
-.am3-f {
-  position: absolute; margin: 0;
-  opacity: 0;
-  will-change: transform, opacity;
-  overflow: hidden;
-  background: #1a1c1e;
-}
-.am3-f img { display: block; width: 100%; height: auto; }
-/* larguras nunca acima da origem: 820, 1280, 1280 e 720 px */
-.am3-f--sofa   { left: 4vw;    top: 15vh; width: min(23vw, 820px); }
-.am3-f--janela { left: 32vw;   top: 12vh; width: min(47vw, 1280px); }
-.am3-f--evento { left: 32vw;   top: 67vh; width: min(27vw, 770px); }
-.am3-f--recall { left: 82.5vw; top: 38vh; width: min(15vw, 720px); }
-
-.am3-linhas {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  overflow: visible; pointer-events: none;
-}
-.am3-linhas line {
-  stroke: var(--am3-linha); stroke-width: 1; fill: none;
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: 1; stroke-dashoffset: 1;
-}
-
-.am3-nums { list-style: none; margin: 0; padding: 0; }
-.am3-n {
-  position: absolute;
-  display: flex; flex-direction: column; gap: 6px;
-  padding: 10px 14px 12px 0;
-  background: var(--am3-fundo); /* chão próprio: o número nunca fica solto sobre foto */
-  opacity: 0;
-  will-change: transform, opacity;
-}
-.am3-n-big {
-  font-family: "Newsreader", Georgia, serif; font-weight: 500;
-  font-size: clamp(48px, 5.6vw, 96px); line-height: .9; letter-spacing: -0.02em;
-  color: var(--am3-tinta); white-space: nowrap;
-}
-.am3-n-leg {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--am3-tinta); opacity: .8; max-width: 17em; line-height: 1.4;
-}
-.am3-n--23  { left: 4vw;    top: 75vh; }
-.am3-n--60  { left: 82.5vw; top: 13vh; }
-.am3-n--309 { left: 61vw;   top: 69vh; }
-.am3-n--309 .am3-n-big { font-size: clamp(44px, 4.2vw, 80px); }
-
-/* ---------- WebGL ---------- */
-.am3-tela {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  z-index: 2; pointer-events: none;
-}
-
-/* ---------- textos ---------- */
-.am3-camada { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+/* ---------- camadas ---------- */
+.am3-cena { position: absolute; inset: 0; z-index: 2; }
+.am3-grade { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
+.am3-grade line { stroke: var(--am3-tinta); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.am3-medidas { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.am3-medida { position: absolute; left: 0; top: 0; font-size: 10px; color: var(--am3-amarelo); white-space: nowrap; }
+.am3-tela { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
+.am3-camada { position: absolute; inset: 0; z-index: 5; pointer-events: none; }
 .am3-camada a { pointer-events: auto; }
 
-.am3-topo {
-  position: absolute; top: 0; left: 0; right: 0;
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 28px 5vw 0;
+.am3-plano { position: absolute; inset: 0; transform: translate3d(0, 100%, 0); will-change: transform; }
+.am3-plano--azul { background: var(--am3-azul); z-index: 2; }
+.am3-plano--amarelo { background: var(--am3-amarelo); z-index: 7; }
+
+/* ---------- caixas de foto: o JS dá tamanho, posição, recorte e parallax interno ---------- */
+.am3-cx { position: absolute; left: 0; top: 0; margin: 0; transform-origin: 0 0; opacity: 0; z-index: 3; }
+.am3-cx img {
+  position: absolute; left: 0; top: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  transform: translate3d(0, var(--py, 0px), 0);
 }
-.am3-marca { margin: 0; font-weight: 400; font-size: 18px; letter-spacing: .01em; color: var(--am3-tinta); opacity: .9; }
+/* preto e branco pré-renderizado por baixo; a cor entra por opacidade (filtro por quadro pesa demais no Safari) */
+.am3-cx .am3-cor { opacity: calc(1 - var(--cinza, 1)); }
+.am3-cx .am3-amar { opacity: var(--am, 0); } /* só a parede muda: pessoa e sofá são os mesmos pixels */
+/* moldura de 1 px desenhada dentro da própria caixa, na janela visível do recorte (nunca risca outra foto) */
+.am3-cx .am3-borda {
+  position: absolute; box-sizing: border-box; pointer-events: none;
+  left: var(--bx, 0px); top: var(--by, 0px); width: var(--bw, 100%); height: var(--bh, 100%);
+  border: var(--bb, 1px) solid var(--am3-linha-cx, #F3F3F0); opacity: var(--brd, 0);
+}
+.am3-cx[data-k="janela"] { z-index: 1; }
+.am3-cx[data-k="sofa"] { z-index: 8; }
+.am3-cel { position: absolute; inset: 0; display: grid; pointer-events: none; }
+.am3-cel { gap: 0; }
+/* módulos inteiros: cada célula some de uma vez (sem faixa parcial), com o fio de 1 px da grade visível enquanto existe */
+.am3-cel i {
+  display: block; background: var(--am3-fundo);
+  box-shadow: inset 0 0 0 var(--bb, 1px) rgba(243, 243, 240, .28), 0 0 0 1px var(--am3-fundo);
+  opacity: clamp(0, calc((var(--o, 0) - var(--rev, 0) * 1.08) * 60 + 1), 1);
+}
+
+/* ---------- textos da cena ---------- */
+.am3-cartao, .am3-bloco, .am3-num, .am3-trilho-r { position: absolute; left: 0; top: 0; opacity: 0; z-index: 4; }
+.am3-cartao { background: var(--am3-fundo); padding: 22px 26px 24px; width: min(30vw, 440px); box-sizing: border-box; z-index: 7; }
+.am3-cartao .am3-mono { margin: 0 0 12px; font-size: 11px; }
+.am3-cartao-t { margin: 0; font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: clamp(30px, 2.8vw, 48px); line-height: 1.02; letter-spacing: -0.015em; }
+
+.am3-bloco { width: min(40vw, 600px); }
+.am3-bloco .am3-mono { margin: 0 0 18px; font-size: 12px; }
+.am3-bloco-t { margin: 0 0 18px; font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: clamp(30px, 2.7vw, 48px); line-height: 1.04; letter-spacing: -0.015em; }
+.am3-bloco-p { margin: 0 0 26px; font-size: clamp(15px, 1.1vw, 18px); line-height: 1.5; font-weight: 300; max-width: 32em; }
+.am3-pilares { list-style: none; margin: 0; padding: 0; max-width: 420px; }
+.am3-pilares li .am3-mi { display: flex; gap: 18px; }
+.am3-pilares li { display: block; font-size: 12px; line-height: 1; padding: 11px 0; border-top: 1px solid rgba(243, 243, 240, .35); }
+
+.am3-num { width: min(36vw, 520px); }
+.am3-num-v { margin: 0; font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 400; font-variant-numeric: tabular-nums;
+  font-size: clamp(40px, 4.6vw, 80px); line-height: 1; letter-spacing: -0.03em; color: var(--am3-amarelo); white-space: nowrap; }
+.am3-num-l { margin: 10px 0 0; font-size: 12px; line-height: 1.45; max-width: 26em; border-top: 1px solid rgba(243, 243, 240, .35); padding-top: 10px; }
+
+/* linhas mascaradas: cada linha sobe de trás do seu próprio corte */
+.am3-ml { display: block; overflow: hidden; }
+.am3-mi { display: block; transform: translate3d(0, calc((1 - clamp(0, var(--tx, 0) * var(--n, 1) - var(--i, 0), 1)) * 105%), 0); }
+
+/* ---------- faixa dos cases ---------- */
+.am3-trilho { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.am3-c { position: absolute; left: 0; top: 0; margin: 0; overflow: hidden; opacity: 0; }
+.am3-c img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.am3-trilho-r { font-size: 12px; margin: 0; }
+
+/* ---------- textos fixos ---------- */
+.am3-topo { position: absolute; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; padding: 28px 5vw 0; }
+.am3-marca { margin: 0; font-weight: 400; font-size: 18px; letter-spacing: .01em; color: var(--am3-tinta); }
 .am3-menu { display: flex; gap: 4px; margin-right: -10px; }
 .am3-menu a {
   display: inline-flex; align-items: center; justify-content: center;
   min-height: 44px; min-width: 44px; padding: 0 10px; box-sizing: border-box;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
-  color: var(--am3-tinta); text-decoration: none; opacity: .72;
+  font-size: 12px; color: var(--am3-tinta); text-decoration: none; opacity: .8;
 }
-.am3-menu a:hover, .am3-menu a:focus-visible { opacity: 1; text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 1px; }
+.am3-menu a:hover, .am3-menu a:focus-visible { opacity: 1; text-decoration: underline; text-decoration-color: var(--am3-amarelo); text-underline-offset: 6px; text-decoration-thickness: 1px; }
 .am3-menu a:focus-visible { outline: 1px solid var(--am3-tinta); outline-offset: 2px; }
-
-/* o título real: visível até os pontos assumirem (LCP e leitores de tela) */
-.am3-titulo {
-  position: absolute; left: 5vw; right: 5vw; top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  font-family: "Newsreader", Georgia, serif; font-weight: 500;
-  font-size: clamp(56px, 10.4vw, 190px);
-  line-height: .98; letter-spacing: -0.025em;
-  color: var(--am3-tinta);
-}
-.am3-tl { display: block; white-space: nowrap; } /* três linhas equilibradas, sem viúva */
-.am3-estatico { display: none; }
 .am3-topo--azul { --am3-tinta: #14213D; clip-path: inset(100% 0 0 0); pointer-events: none; }
 .am3-topo--azul a { pointer-events: none !important; }
 .am3-topo--azul .am3-marca, .am3-topo--azul .am3-menu a { opacity: 1; font-weight: 500; } /* #14213D sobre #F2C230: 9,5:1 */
-.am3-pontos .am3-titulo { opacity: 0; transition: opacity .5s linear; }
 
-/* bloco à esquerda: cada .am3-b tem --i (ordem de linha); entra quando --am3-bl passa dele */
-.am3-bloco {
-  position: absolute; left: 5vw; top: 50%; transform: translateY(-46%);
-  width: min(40vw, 560px);
-}
-.am3-b, .am3-bio .am3-l {
-  --am3-k: clamp(0, calc(var(--am3-bl) - var(--i, 0)), 1);
-  opacity: calc(var(--am3-k) * (1 - var(--am3-bs)));
-  transform: translateY(calc((1 - var(--am3-k)) * 0.7em - var(--am3-bs) * 24px));
-}
-.am3-bio.am3-b { opacity: 1; transform: none; }
-.am3-bio .am3-l { display: inline-block; }
-.am3-rotulo {
-  margin: 0 0 22px;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--am3-tinta);
-}
-.am3-b-titulo {
-  margin: 0 0 24px;
+.am3-rot0 { position: absolute; left: 5vw; top: calc(50% - 1.47 * clamp(56px, 10.4vw, 190px) - 40px); margin: 0; font-size: 12px; }
+.am3-titulo {
+  position: absolute; left: 5vw; right: 5vw; top: 50%; transform: translateY(-50%); margin: 0;
   font-family: "Newsreader", Georgia, serif; font-weight: 500;
-  font-size: clamp(34px, 3.4vw, 56px); line-height: 1.02; letter-spacing: -0.015em;
-  color: var(--am3-tinta);
+  font-size: clamp(56px, 10.4vw, 190px); line-height: .98; letter-spacing: -0.025em; color: var(--am3-tinta);
 }
-.am3-bio { margin: 0 0 30px; font-size: clamp(16px, 1.15vw, 19px); line-height: 1.5; font-weight: 300; color: var(--am3-tinta); max-width: 31em; }
-.am3-pilares { list-style: none; margin: 0; padding: 0; max-width: 420px; }
-.am3-pilares li {
-  display: flex; gap: 18px;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 13px; line-height: 1; letter-spacing: .08em; text-transform: uppercase;
-  padding: 12px 0; border-top: 1px solid var(--am3-tinta);
-  color: var(--am3-tinta);
-}
-.am3-pilares li span { opacity: .55; }
-
-.am3-role {
-  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--am3-tinta); opacity: .65;
-}
-.am3-role-linha { width: 1px; height: 26px; background: var(--am3-tinta); }
+.am3-tl { display: block; white-space: nowrap; }
+.am3-pc { color: var(--am3-amarelo); }
+.am3-pontos .am3-titulo { opacity: 0; transition: opacity .5s linear; }
+.am3-filete { position: absolute; left: 5vw; top: calc(50% + 1.47 * clamp(56px, 10.4vw, 190px) + 18px); width: 120px; height: 1px; background: var(--am3-amarelo); transform-origin: 0 0; }
+.am3-resto { position: absolute; left: 5vw; top: 84px; margin: 0; font-family: "Newsreader", Georgia, serif; font-weight: 500; font-size: 20px; opacity: 0; }
+.am3-role { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 12px; color: var(--am3-tinta); opacity: .65; }
+.am3-role-linha { width: 1px; height: 26px; background: var(--am3-amarelo); }
 
 .am3-fim { height: 100vh; background: #F2C230; }
 
-/* ---------- celular ---------- */
+/* ---------- celular: versão própria, menos camadas ---------- */
 @media (max-width: 767px) {
   .am3-topo { padding: 10px 8px 0 20px; }
   .am3-marca { font-size: 16px; }
   .am3-menu { gap: 0; margin-right: 0; }
   .am3-menu a { padding: 0 7px; font-size: 11px; }
   .am3-titulo { left: 20px; right: 20px; font-size: clamp(44px, 14.6vw, 76px); top: 46%; }
-  .am3-bloco { left: 20px; right: 20px; width: auto; top: auto; bottom: 28px; transform: none; }
-  .am3-rotulo { margin-bottom: 12px; font-size: 11px; }
-  .am3-b-titulo { font-size: 30px; margin-bottom: 12px; }
-  .am3-bio { font-size: 15px; line-height: 1.45; margin-bottom: 16px; }
-  .am3-pilares li { font-size: 11px; padding: 8px 0; gap: 12px; }
   .am3-tl { display: inline; white-space: normal; }
-  .am3-f--janela { left: 20px;  top: 9vh;  width: min(88vw, 1280px); }
-  .am3-f--sofa   { left: 46vw;  top: 30vh; width: min(50vw, 820px); }
-  .am3-f--recall { left: 20px;  top: 47vh; width: min(38vw, 720px); }
-  .am3-f--evento { left: 20px;  top: 82vh; width: min(50vw, 770px); }
-  .am3-n-big { font-size: 44px; }
-  .am3-n-leg { font-size: 10px; max-width: 14em; }
-  .am3-n--60  { left: 20px; top: 36.5vh; padding-top: 4px; }
-  .am3-n--23  { left: calc(38vw + 32px); top: 67vh; }
-  .am3-n--309 { left: calc(50vw + 32px); top: 84vh; }
-  .am3-n--309 .am3-n-big { font-size: 30px; }
+  .am3-rot0 { left: 20px; top: calc(46% - 2.1 * clamp(44px, 14.6vw, 76px) - 30px); font-size: 11px; }
+  .am3-filete { left: 20px; top: calc(46% + 2.1 * clamp(44px, 14.6vw, 76px) + 12px); width: 80px; }
+  .am3-resto { left: 20px; top: 62px; font-size: 16px; }
+  .am3-cartao { width: calc(100% - 64px); padding: 14px 16px 16px; }
+  .am3-cartao-t { font-size: 26px; }
+  .am3-bloco { width: calc(100% - 40px); }
+  .am3-bloco .am3-mono { font-size: 10px; margin-bottom: 10px; }
+  .am3-bloco-t { font-size: 24px; margin-bottom: 10px; }
+  .am3-bloco-p { font-size: 14px; margin-bottom: 14px; }
+  .am3-pilares li { font-size: 10px; padding: 7px 0; gap: 12px; }
+  .am3-num { width: calc(100% - 40px); }
+  .am3-num-v { font-size: 40px; }
+  .am3-num-l { font-size: 10px; margin-top: 6px; padding-top: 6px; }
+  .am3-trilho-r { font-size: 10px; }
 }
 
-/* Movimento reduzido ou sem WebGL: cada etapa mostra o estado final, sem animação */
-.am3.am3-final .am3-tela, .am3.am3-final .am3-role { display: none; }
-.am3.am3-final .am3-titulo { opacity: 1; }
-.am3.am3-final .am3-palco { height: auto; min-height: 100svh; overflow: visible; display: flex; flex-direction: column; gap: 12vh; padding: 140px 0 14vh; box-sizing: border-box; }
-.am3.am3-final .am3-camada { position: static; display: contents; }
-.am3.am3-final .am3-topo { position: absolute; }
-.am3.am3-final .am3-titulo, .am3.am3-final .am3-bloco { position: relative; inset: auto; transform: none; left: 0; margin: 0 5vw; }
-.am3.am3-final .am3-bloco { width: auto; max-width: 560px; --am3-bl: 99; }
-.am3.am3-final .am3-cena { position: relative; visibility: visible; height: 92vh; overflow: hidden; }
-.am3.am3-final .am3-f, .am3.am3-final .am3-n { opacity: 1; }
-.am3.am3-final .am3-linhas { display: none; }
-.am3.am3-final .am3-palco { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
-.am3.am3-final .am3-titulo { grid-column: 1; grid-row: 1; font-size: clamp(44px, 6.4vw, 120px); }
-.am3.am3-final .am3-estatico { display: block; grid-column: 2; grid-row: 1; width: min(100%, 720px); height: auto; justify-self: center; }
-.am3.am3-final .am3-bloco { grid-column: 1 / -1; grid-row: 2; }
-.am3.am3-final .am3-cena { grid-column: 1 / -1; grid-row: 3; }
-@media (max-width: 767px) {
-  .am3.am3-final .am3-palco { grid-template-columns: 1fr; }
-  .am3.am3-final .am3-titulo { font-size: clamp(44px, 14.6vw, 76px); }
-  .am3.am3-final .am3-estatico { grid-column: 1; grid-row: 2; width: calc(100% - 40px); }
-  .am3.am3-final .am3-bloco { grid-row: 3; }
-  .am3.am3-final .am3-cena { grid-row: 4; }
-}
-@media (max-width: 767px) {
-  .am3.am3-final .am3-palco { padding-top: 96px; }
-  .am3.am3-final .am3-bloco { margin: 0 20px; }
-  .am3.am3-final .am3-titulo { margin: 0 20px; }
-  .am3.am3-final .am3-cena { height: 100vh; }
-}
+/* se o script não rodar: composição estática legível */
+.am3.am3-final .am3-palco { height: auto; min-height: 100svh; }
+.am3.am3-final .am3-tela, .am3.am3-final .am3-role, .am3.am3-final .am3-plano, .am3.am3-final .am3-trilho, .am3.am3-final .am3-resto { display: none; }
+.am3.am3-final .am3-camada { position: relative; height: 100svh; }
+.am3.am3-final .am3-cena { position: relative; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; padding: 5vw; }
+.am3.am3-final .am3-cx, .am3.am3-final .am3-bloco, .am3.am3-final .am3-num, .am3.am3-final .am3-cartao { position: relative; opacity: 1; width: auto; }
+.am3.am3-final .am3-cx img { position: relative; height: auto; }
+.am3.am3-final .am3-cx .am3-pb { display: none; }
+.am3.am3-final .am3-cx .am3-cor { opacity: 1; }
+.am3.am3-final .am3-cx .am3-recorte { display: none; }

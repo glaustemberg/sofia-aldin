@@ -5,6 +5,8 @@
 (() => {
   const doc = document.documentElement;
   doc.classList.add('js');
+  // movimento reduzido: a construção guiada pela rolagem fica (o visitante controla); a entrada automática
+  // fica curta e sem o voo dos pontos
   const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const W0 = 1280, H0 = 853, FOCO = 500;
   const $ = (s) => document.querySelector(s);
@@ -30,22 +32,35 @@
 
   const carregar = (src) => new Promise((ok, erro) => { const i = new Image(); i.onload = () => ok(i); i.onerror = erro; i.src = src; });
 
+  // fontes externas lentas não seguram a cena: no máximo 2,5 s
+  const fontes = Promise.race([document.fonts ? document.fonts.ready : null, new Promise((ok) => setTimeout(ok, 2500))]);
+  let imagens = null;
   Promise.all([
-    carregar('assets/sofia-janela.jpg'), carregar('assets/linhas.png'), carregar('assets/ordem.png'), document.fonts.ready
-  ]).then(iniciar).catch(() => { doc.classList.add('sem-gl'); try { layout(); } catch (e) {} pronta(); });
+    carregar('assets/sofia-janela.jpg'), carregar('assets/linhas.png'), carregar('assets/ordem.png'), fontes
+  ]).then(iniciar).catch((e) => {
+    console.error('[sofia] abertura:', e);
+    doc.classList.add('sem-gl'); try { layout(); } catch (e2) {} pronta();
+  });
 
   // avisa a página integrada que a abertura já criou o pin (capítulos iniciam depois)
   function pronta() { document.dispatchEvent(new Event('abertura:pronta')); }
 
   function iniciar([imFoto, imLinhas, imOrdem]) {
-    if (!iniciarGL(imFoto, imLinhas, imOrdem)) doc.classList.add('sem-gl');
+    imagens = [imFoto, imLinhas, imOrdem];
+    let okGL = false;
+    try { okGL = iniciarGL(imFoto, imLinhas, imOrdem); } catch (e) { console.warn('[sofia] WebGL:', e); gl = null; }
+    if (!okGL) doc.classList.add('sem-gl');
+    // celular pode perder o contexto (aba em segundo plano, memória): cai para a foto em 2D e volta quando restaurar
+    glc.addEventListener('webglcontextlost', (e) => { e.preventDefault(); gl = null; doc.classList.add('sem-gl'); ultimo = ''; });
+    glc.addEventListener('webglcontextrestored', () => {
+      try { if (iniciarGL(...imagens)) { doc.classList.remove('sem-gl'); layout(); ultimo = ''; } } catch (e) {}
+    });
     ctx = dc.getContext('2d');
     layout();
     addEventListener('resize', debounce(() => { layout(); ultimo = ''; }, 150));
 
-    if (RM) { estadoFinal(); render(); pronta(); return; } // estado final: a foto, sem malha
     gsap.registerPlugin(ScrollTrigger, SplitText);
-    intro();
+    if (RM) introCalma(); else intro();
     rolagem();
     gancho();
     gsap.ticker.add(render);
@@ -79,7 +94,8 @@
 
   /* ---------- WebGL ---------- */
   function iniciarGL(imFoto, imLinhas, imOrdem) {
-    gl = glc.getContext('webgl', { antialias: false, alpha: false, premultipliedAlpha: false });
+    gl = glc.getContext('webgl', { antialias: false, alpha: false, premultipliedAlpha: false })
+      || glc.getContext('experimental-webgl', { antialias: false, alpha: false, premultipliedAlpha: false });
     if (!gl) return false;
     const vs = `attribute vec2 p;uniform vec2 uA,uB;varying vec2 v;
       void main(){v=mix(uA,uB,vec2(p.x*.5+.5,.5-p.y*.5));gl_Position=vec4(p,0.,1.);}`;
@@ -241,7 +257,8 @@
     if (gl) {
       gl.uniform1f(glU.uRev, S.reveal); gl.uniform1f(glU.uLin, S.line);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    }
+      foto.style.opacity = '';
+    } else foto.style.opacity = smooth(0, 0.9, S.reveal).toFixed(3); // sem WebGL a foto surge com a rolagem
 
     // Sofia em malha: na entrada os pontos chegam e as arestas acendem; parada, é uma cópia da figura pronta
     ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -268,14 +285,12 @@
       k.path.setAttribute('stroke-opacity', (0.82 - 0.32 * m).toFixed(3));
     }
     grade.forEach((g, i) => g.e.setAttribute('stroke-dasharray', `${clamp01(S.grid * 1.5 - i * 0.08).toFixed(4)} 2`));
-    if (!RM) {
-      const lis = document.querySelectorAll('.pilares li');
-      lis.forEach((li, i) => {
-        const v = clamp01(S.grid * 1.5 - (linhasPilar[i] + 1) * 0.08 - (mobile ? i * 0.06 : 0));
-        li.style.opacity = v;
-        li.style.transform = `translateY(${(1 - v) * 8}px)`;
-      });
-    }
+    const lis = document.querySelectorAll('.pilares li');
+    lis.forEach((li, i) => {
+      const v = clamp01(S.grid * 1.5 - (linhasPilar[i] + 1) * 0.08 - (mobile ? i * 0.06 : 0));
+      li.style.opacity = v;
+      li.style.transform = RM ? '' : `translateY(${(1 - v) * 8}px)`;
+    });
     gGrade.style.opacity = 1 - S.fall;
     cortina.style.clipPath = `inset(0 0 ${((1 - S.curtain) * 100).toFixed(2)}% 0)`;
   }
@@ -325,8 +340,12 @@
     });
   }
 
-  function estadoFinal() {
-    Object.assign(S, { line: 0, dots: 0, si: 1, reveal: 1, ci: 1, cs: 1, grid: 1, fall: 0, morph: 0, curtain: 0 });
+  // movimento reduzido: tudo chega em 0,8 s por fade, sem pontos voando nem texto subindo
+  function introCalma() {
+    S.si = 1;
+    gsap.timeline({ defaults: { duration: 0.8, ease: 'power1.out' } })
+      .to(S, { line: 1, dots: 1, ci: 1 }, 0)
+      .from([nav, '.titulo', '.filete', '.dica-in'], { autoAlpha: 0 }, 0);
   }
 
   function debounce(fn, ms) { let t; return () => { clearTimeout(t); t = setTimeout(fn, ms); }; }

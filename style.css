@@ -79,7 +79,7 @@ body{background:var(--grafite);color:var(--linha);font-family:var(--corpo);font-
 @media (max-width:380px){.nav ul{gap:12px;font-size:13px}}
 
 /* ---------- movimento reduzido ---------- */
+/* só o que é automático fica parado; a construção pela rolagem continua (main.js) */
 @media (prefers-reduced-motion:reduce){
   .nav ul a::after{transition:none}
-  .dica{display:none}
 }

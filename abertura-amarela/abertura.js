@@ -23,7 +23,7 @@
   const gCad = svg.querySelector('.sala-poltrona');
   const nEl = sec.querySelector('.contador-n');
   const topo = document.querySelector('.topo');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // movimento reduzido não desliga nada aqui: tudo é guiado pela rolagem (só o fio da dica para, no CSS)
   const mobile = matchMedia('(max-width: 767px)').matches;
 
   // a sala inteira fica num grupo com a mesma transformação da foto
@@ -439,14 +439,17 @@
     ptB = Array.from({ length: NB }, () => []);
     for (const p of pts) ptB[p.b].push(p);
     cache = document.createElement('canvas'); cache.width = W; cache.height = H; cachex = cache.getContext('2d');
-    try { initGL(); } catch (e) { gl = null; }
+    try { initGL(); } catch (e) { console.warn('[sofia] WebGL:', e); gl = null; }
+    // contexto perdido no celular: a mesma malha segue no canvas 2D
+    if (gl) U.canvas.addEventListener('webglcontextlost', (e) => { e.preventDefault(); gl = null; U.canvas.remove(); render(); });
 
     resize(); room();
 
     const struct = () => svg.querySelectorAll('path[pathLength]:not(.det)');
     const det = () => svg.querySelectorAll('path.det');
     const all = () => svg.querySelectorAll('path[pathLength]');
-    if (reduce || !window.gsap) {
+    if (!window.gsap || !window.ScrollTrigger) {
+      console.error('[sofia] GSAP não carregou: abertura no estado final');
       Object.assign(state, { k: 2, scat: 0, d: 1 });
       all().forEach(p => (p.style.strokeDashoffset = 0));
       render();
@@ -494,6 +497,6 @@
 
   const img = new Image();
   img.onload = () => setup(img);
-  img.onerror = pronta;
+  img.onerror = () => { console.error('[sofia] foto da abertura não carregou'); pronta(); };
   img.src = BASE + 'assets/sofia-recorte.webp';
 })();

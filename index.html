@@ -7,9 +7,9 @@
 <meta name="description" content="Sofia Aldin, consultoria de marketing e comunicação.">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter+Tight:wght@300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="vendor/fonts/newsreader-normal-300-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vendor/fonts/inter-tight-normal-300-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
 <script>document.addEventListener('abertura:pronta', function () { window.__aberturaPronta = true; }, { once: true });</script>
 <link rel="preload" href="assets/sofia-janela.jpg" as="image">
 <link rel="stylesheet" href="style.css">
@@ -710,14 +710,20 @@
   var feito = false;
   function capitulos() {
     if (feito) return; feito = true;
-    if (window.initC01_05) window.initC01_05();
-    if (window.initC06_11) window.initC06_11();
-    
+    // cada peça isolada: se uma falhar, as outras iniciam e o erro fica só no console
+    function tenta(nome, fn) { try { fn(); } catch (e) { console.error('[sofia] ' + nome + ':', e); } }
+    tenta('capítulos 1 a 4', function () { if (window.initC01_05) window.initC01_05(); });
+    tenta('capítulos 5 a 11', function () { if (window.initC06_11) window.initC06_11(); });
+    tenta('integração', function () {  });
     var carregou = document.readyState === 'complete' ? Promise.resolve()
       : new Promise(function (ok) { addEventListener('load', ok, { once: true }); });
+    var recalculou = false;
     Promise.all([document.fonts.ready, carregou]).then(function () {
+      recalculou = true;
       if (window.ScrollTrigger) { ScrollTrigger.sort(); ScrollTrigger.refresh(); }
     });
+    // fontes externas lentas ou bloqueadas não seguram o recálculo
+    setTimeout(function () { if (!recalculou && window.ScrollTrigger) ScrollTrigger.refresh(); }, 5000);
     // imagens lazy mudam a largura do trilho e a altura de seções: recalcula os pins quando chegam
     var t;
     document.querySelectorAll('img[loading="lazy"]').forEach(function (im) {
@@ -734,9 +740,9 @@
   if (document.readyState === 'complete') teto(); else addEventListener('load', teto, { once: true });
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha384-xb96EMJeax+NLXMC88ZBa1xAeAW+kn+horHh/zFlbMLG2UPWhMJJSlv7fi57hS+Q" crossorigin="anonymous"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
+<script src="vendor/SplitText.min.js"></script>
 <script src="main.js"></script>
 <script src="capitulos/c01-c05.js"></script>
 <script src="capitulos/c06-c11.js"></script>

@@ -269,8 +269,8 @@
   var inits = { c01: c01, c02: c02, c03: c03, c04: c04 };
 
   function initC01_05() {
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || !window.gsap || !window.ScrollTrigger) {
+    // movimento reduzido mantém as animações: todas são disparadas ou guiadas pela rolagem
+    if (!window.gsap || !window.ScrollTrigger) {
       var s = document.querySelector('.c04-andaime');
       buildAndaime(s);
       window.addEventListener('resize', function () { buildAndaime(s); });

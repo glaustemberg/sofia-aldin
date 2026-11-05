@@ -81,9 +81,7 @@ body { font-family: var(--corpo, "Inter Tight", system-ui, sans-serif); overflow
   .titulo-2 br { display: none; }
 }
 
+/* movimento reduzido: só o fio automático da dica para; o rosto continua se montando com a rolagem */
 @media (prefers-reduced-motion: reduce) {
-  .dica, .titulo-1, .contador { display: none; }
-  .titulo-2 { opacity: 1; visibility: visible; }
-  .sala path { stroke-dashoffset: 0; }
-  .dica-fio { animation: none; }
+  .dica-fio { animation: none; transform: scaleY(1); }
 }

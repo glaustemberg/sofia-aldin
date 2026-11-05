@@ -7,9 +7,9 @@
 <meta name="description" content="Sofia Aldin, consultoria de marketing e comunicação.">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="robots" content="noindex, nofollow">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter+Tight:wght@300..600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="vendor/fonts/newsreader-normal-300-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vendor/fonts/inter-tight-normal-300-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
 <script>document.addEventListener('abertura:pronta', function () { window.__aberturaPronta = true; }, { once: true });</script>
 
 <link rel="stylesheet" href="abertura-malha/malha.css">
@@ -21,21 +21,49 @@
 <main id="conteudo">
 <section class="am3" id="topo" aria-label="Abertura">
   <div class="am3-palco">
-    <span class="am3-passagem" aria-hidden="true"></span>
 
-    <div class="am3-cena" role="group" aria-label="Sofia Aldin em fotos">
-      <svg class="am3-linhas" aria-hidden="true"></svg>
-      <figure class="am3-f am3-f--sofa" data-p="0.55"><img data-src="fotos/sofia-sofa.webp" alt="Sofia Aldin sentada em um sofá azul, diante de uma parede laranja" width="820" height="1230" decoding="async"></figure>
-      <figure class="am3-f am3-f--janela" data-p="0.25"><img data-src="fotos/sofia-janela.webp" alt="Sofia Aldin de braços cruzados diante de uma janela com vista para a cidade" width="1280" height="853" decoding="async"></figure>
-      <figure class="am3-f am3-f--evento" data-p="0.4"><img data-src="fotos/sofia-evento.webp" alt="Sofia Aldin sorrindo em um evento, com o escudo do Corinthians ao fundo" width="770" height="430" decoding="async"></figure>
-      <figure class="am3-f am3-f--recall" data-p="0.9"><img data-src="fotos/sofia-recall.webp" alt="Sofia Aldin segurando o troféu do JC Recall de Marcas" width="720" height="1280" decoding="async"></figure>
-      <ul class="am3-nums" aria-label="Números">
-        <li class="am3-n am3-n--23" data-p="0.7"><span class="am3-n-big">23</span><span class="am3-n-leg">anos de mercado</span></li>
-        <li class="am3-n am3-n--60" data-p="0.35"><span class="am3-n-big">60</span><span class="am3-n-leg">pessoas no time de marketing</span></li>
-        <li class="am3-n am3-n--309" data-p="0.8"><span class="am3-n-big">R$&nbsp;309&nbsp;mi</span><span class="am3-n-leg">em patrocínio com o Corinthians</span></li>
-      </ul>
+    <div class="am3-cena" role="group" aria-label="Sofia Aldin: trajetória em fotos e números">
+            <span class="am3-plano am3-plano--azul" aria-hidden="true"></span>
+      <span class="am3-plano am3-plano--amarelo" aria-hidden="true"></span>
+      <svg class="am3-grade" aria-hidden="true"></svg>
+            <figure class="am3-cx" data-k="sofa" data-dim="820 × 1230"><img class="am3-pb" data-src="fotos/sofia-sofa-pb.webp" alt="" width="820" height="1230" decoding="async"><img class="am3-cor" data-src="fotos/sofia-sofa.webp" alt="Sofia Aldin sentada em um sofá azul, diante de uma parede laranja" width="820" height="1230" decoding="async"><img class="am3-amar" data-src="fotos/sofia-sofa-amarelo.webp" alt="" width="820" height="1230" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+      <figure class="am3-cx" data-k="janela" data-dim="1280 × 853"><img class="am3-pb" data-src="fotos/sofia-janela-pb.webp" alt="" width="1280" height="853" decoding="async"><img class="am3-cor" data-src="fotos/sofia-janela.webp" alt="Sofia Aldin de braços cruzados diante de uma janela com vista para a cidade" width="1280" height="853" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+      <figure class="am3-cx" data-k="recall" data-dim="720 × 1280"><img class="am3-pb" data-src="fotos/sofia-recall-pb.webp" alt="" width="720" height="1280" decoding="async"><img class="am3-cor" data-src="fotos/sofia-recall.webp" alt="Sofia Aldin segurando o troféu do JC Recall de Marcas" width="720" height="1280" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+      <figure class="am3-cx" data-k="coletiva" data-dim="770 × 430"><img class="am3-pb" data-src="fotos/sofia-evento-pb.webp" alt="" width="770" height="430" decoding="async"><img class="am3-cor" data-src="fotos/sofia-evento.webp" alt="Sofia Aldin na coletiva do Corinthians, com o escudo do clube ao fundo" width="770" height="430" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+      <figure class="am3-cx" data-k="bbb" data-dim="928 × 555"><img class="am3-pb" data-src="fotos/palco-bbb-pb.webp" alt="" width="928" height="555" decoding="async"><img class="am3-cor" data-src="../capitulos/assets/palco-bbb-24h.jpg" alt="Palco da Esportes da Sorte iluminado em verde e azul, com telões e a marca no alto" width="928" height="555" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+      <figure class="am3-cx" data-k="folha" data-dim="1196 × 401"><img class="am3-cor" data-src="../capitulos/assets/folha-manchete-corinthians.jpg" alt="Reprodução da manchete: Corinthians destaca as virtudes do modelo de entrega e marketing do Esportes da Sorte" width="1196" height="401" decoding="async"><span class="am3-borda" aria-hidden="true"></span></figure>
+
+      <div class="am3-cartao" data-k="cartao"><p class="am3-mono"><span class="am3-am">00</span> Sofia Aldin</p><p class="am3-cartao-t am3-mt">Estratégia para crescer com estrutura.</p></div>
+
+      <div class="am3-bloco" data-k="bloco">
+        <p class="am3-mono am3-mt"><span class="am3-am">01</span> Consultoria de marketing e comunicação</p>
+        <h2 class="am3-bloco-t am3-mt">De especialista a CMO, 23 anos de mercado e 14 em liderança de times.</h2>
+        <p class="am3-bloco-p am3-mt">Agência, cliente e consultoria, com marcas como TIM, Walmart.com, LG, Dell, iFood e Esportes Gaming Brasil.</p>
+        <ul class="am3-pilares" aria-label="Frentes de trabalho">
+          <li class="am3-mt"><span class="am3-am">01</span>Diagnóstico</li>
+          <li class="am3-mt"><span class="am3-am">02</span>Estrutura</li>
+          <li class="am3-mt"><span class="am3-am">03</span>Mentoria</li>
+          <li class="am3-mt"><span class="am3-am">04</span>Posicionamento</li>
+          <li class="am3-mt"><span class="am3-am">05</span>Indicadores</li>
+        </ul>
+      </div>
+
+            <div class="am3-num" data-k="n60"><p class="am3-num-v"><span data-de="17" data-ate="60" data-pre="17 → ">17 → 60</span></p><p class="am3-num-l am3-mt">pessoas no time de marketing</p></div>
+      <div class="am3-num" data-k="n92"><p class="am3-num-v"><span data-de="0" data-ate="92" data-pre="+" data-suf="%">+92%</span></p><p class="am3-num-l am3-mt">de seguidores no Instagram em nove meses, chegando a 2,5 milhões</p></div>
+      <div class="am3-num" data-k="n309"><p class="am3-num-v"><span data-de="0" data-ate="309" data-pre="R$ " data-suf=" mi">R$ 309 mi</span></p><p class="am3-num-l am3-mt">em patrocínio com o Corinthians</p></div>
+
+            <div class="am3-trilho" aria-label="Prévia dos cases">
+        <p class="am3-mono am3-trilho-r" data-k="r08"><span class="am3-am">Case 08</span> · Carnaval</p>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-11-trio.jpg" alt="Cantor de camisa azul canta no trio, com a marca na lateral" width="677" height="544" decoding="async"></figure>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-01-artista.jpg" alt="Cantora em figurino azul com o símbolo da marca, no palco" width="285" height="389" decoding="async"></figure>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-06-multidao.jpg" alt="Camarote e multidão com a marca Esportes da Sorte em avenida lotada" width="672" height="369" decoding="async"></figure>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-08-folioes.jpg" alt="Foliões fantasiados com leque azul da marca" width="355" height="548" decoding="async"></figure>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-10-roda-gigante.jpg" alt="Roda-gigante iluminada à noite com a marca Esportes da Sorte ao centro" width="432" height="492" decoding="async"></figure>
+        <figure class="am3-c" data-case="08"><img data-src="../capitulos/assets/carnaval-rede-social-post.jpg" alt="Publicação de @bregabregoso: o chapéu e o copo azuis da marca, com a legenda As duas coisas que eu mais vi nesse Carnaval" width="589" height="956" decoding="async"></figure>
+      </div>
     </div>
 
+    <div class="am3-medidas" aria-hidden="true"></div>
     <canvas class="am3-tela" aria-hidden="true"></canvas>
 
     <div class="am3-camada">
@@ -48,21 +76,10 @@
         </nav>
       </header>
 
-      <h1 class="am3-titulo"><span class="am3-tl">Estratégia para</span> <span class="am3-tl">crescer com</span> <span class="am3-tl">estrutura.</span></h1>
-      <img class="am3-estatico" data-src="rosto-pontos.webp" alt="Retrato de Sofia Aldin desenhado em pontos" width="960" height="960" decoding="async">
-
-      <div class="am3-bloco">
-        <p class="am3-b am3-rotulo">Sofia Aldin · Quem sou</p>
-        <h2 class="am3-b am3-b-titulo">Consultoria de marketing e comunicação</h2>
-        <p class="am3-b am3-bio">23 anos de mercado, 14 deles em liderança de times. Já estive na agência, no cliente e na consultoria, com marcas como TIM, Walmart.com, LG, Dell, iFood e Esportes Gaming Brasil.</p>
-        <ul class="am3-pilares" aria-label="Frentes de trabalho">
-          <li class="am3-b"><span>01</span>Diagnóstico</li>
-          <li class="am3-b"><span>02</span>Estrutura</li>
-          <li class="am3-b"><span>03</span>Mentoria</li>
-          <li class="am3-b"><span>04</span>Posicionamento</li>
-          <li class="am3-b"><span>05</span>Indicadores</li>
-        </ul>
-      </div>
+      <p class="am3-mono am3-rot0" aria-hidden="true"><span class="am3-am">00</span> · Sofia Aldin</p>
+      <h1 class="am3-titulo"><span class="am3-tl">Estratégia para</span> <span class="am3-tl">crescer com</span> <span class="am3-tl">estrutura<span class="am3-pc">.</span></span></h1>
+      <span class="am3-filete" aria-hidden="true"></span>
+      <p class="am3-resto" aria-hidden="true">Estratégia para crescer com estrutura.</p>
 
       <div class="am3-role" aria-hidden="true">
         <span class="am3-role-linha"></span>
@@ -725,14 +742,20 @@
   var feito = false;
   function capitulos() {
     if (feito) return; feito = true;
-    if (window.initC01_05) window.initC01_05();
-    if (window.initC06_11) window.initC06_11();
-    
+    // cada peça isolada: se uma falhar, as outras iniciam e o erro fica só no console
+    function tenta(nome, fn) { try { fn(); } catch (e) { console.error('[sofia] ' + nome + ':', e); } }
+    tenta('capítulos 1 a 4', function () { if (window.initC01_05) window.initC01_05(); });
+    tenta('capítulos 5 a 11', function () { if (window.initC06_11) window.initC06_11(); });
+    tenta('integração', function () {  });
     var carregou = document.readyState === 'complete' ? Promise.resolve()
       : new Promise(function (ok) { addEventListener('load', ok, { once: true }); });
+    var recalculou = false;
     Promise.all([document.fonts.ready, carregou]).then(function () {
+      recalculou = true;
       if (window.ScrollTrigger) { ScrollTrigger.sort(); ScrollTrigger.refresh(); }
     });
+    // fontes externas lentas ou bloqueadas não seguram o recálculo
+    setTimeout(function () { if (!recalculou && window.ScrollTrigger) ScrollTrigger.refresh(); }, 5000);
     // imagens lazy mudam a largura do trilho e a altura de seções: recalcula os pins quando chegam
     var t;
     document.querySelectorAll('img[loading="lazy"]').forEach(function (im) {
@@ -749,17 +772,16 @@
   if (document.readyState === 'complete') teto(); else addEventListener('load', teto, { once: true });
 })();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" integrity="sha384-CI3ELBVUz9XQO+97x6nwMDPosPR5XvsxW2ua7N1Xeygeh1IxtgqtCkGfQY9WWdHu" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha384-HOvlOYPIs/zjoIkWUGXkVmXsjr8GuZLV+Q+rcPwmJOVZVpvTSXQChiN4t9Euv9Vc" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha384-P8VzCVnT9NBUkMrpcIZrJbA7EBjJvh/fJS6PmP+4nLIM284DtsImIv8D0fFjIkeh" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/delaunator@5.0.1/delaunator.min.js" integrity="sha384-L4PuskNth/L3clovoDxxM+uVeSp0v9I7jRevWXKXP6NPMu5m1rCoGDgnsZUkIcNK" crossorigin="anonymous"></script>
+<script src="vendor/three.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/ScrollTrigger.min.js"></script>
 <script src="abertura-malha/malha.js"></script>
 <script src="capitulos/c01-c05.js"></script>
 <script src="capitulos/c06-c11.js"></script>
 <script>
 (function () {
   var root = document.querySelector('.am3');
-  window.initAberturaMalha(root);
+  try { window.initAberturaMalha(root); } catch (e) { console.error('[sofia] abertura malha:', e); root.classList.add('am3-final'); }
   var t0 = Date.now();
   (function espera() {
     if (root._am3tl || root.classList.contains('am3-final') || Date.now() - t0 > 7000)

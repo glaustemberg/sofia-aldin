@@ -288,5 +288,4 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .c611 *, .c611 *::before, .c611 *::after { transition: none !important; animation: none !important; }
-  .c611-cida-canvas { display: none; }
 }

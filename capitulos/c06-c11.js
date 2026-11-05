@@ -53,7 +53,7 @@
   function retratoLazy() {
     var fig = document.querySelector(".c611-cida-retrato");
     if (!fig || fig._c611) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !window.gsap || !window.ScrollTrigger) return;
+    if (!window.gsap || !window.ScrollTrigger) return;
     var go = function () {
       if (fig._c611) return; fig._c611 = true;
       gsap.registerPlugin(ScrollTrigger); retrato(fig, ScrollTrigger);
@@ -72,9 +72,8 @@
     var gsap = window.gsap, ST = window.ScrollTrigger;
     if (!gsap || !ST) return null;
     gsap.registerPlugin(ST);
-    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var q = function (s, el) { return Array.prototype.slice.call((el || root).querySelectorAll(s)); };
-    if (reduce) return null; // conteúdo já está no estado final no HTML
+    // movimento reduzido mantém as animações: todas são disparadas ou guiadas pela rolagem
 
     var ctx = gsap.context(function () {
       // textos sobem
