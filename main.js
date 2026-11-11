@@ -181,7 +181,7 @@
 
   /* ---------- rolagem: projeto, obra e passagem ---------- */
   function rolagem() {
-    gsap.set(['.legenda', '.cena-leg'], { autoAlpha: 0, y: 14 });
+    gsap.set('.legenda', { autoAlpha: 0, y: 14 });
     const tl = gsap.timeline({
       defaults: { ease: 'none' },
       scrollTrigger: { trigger: '.abertura', pin: palco, start: 'top top', end: () => '+=' + innerHeight * (mobile ? 3.0 : 3.4), scrub: 1.1, anticipatePin: 1, invalidateOnRefresh: true }
@@ -192,8 +192,6 @@
       .to(S, { cs: 1, duration: 2, ease: 'power2.inOut' }, 0.6)
       .to('.legenda', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 1.4)
       .to(S, { obra: 1, duration: 1.7 }, 1.8)
-      .to('.cena-leg', { autoAlpha: 1, y: 0, duration: .8, ease: 'expo.out' }, 3.0)
-      .to('.cena-leg', { autoAlpha: 0, duration: .4 }, 4.5)
       .to(S, { grid: 1, duration: 1.6, ease: 'power1.inOut' }, 1.8)
       // pausa com a foto inteira; a obra volta para dentro da moldura (inteira, sem corte) antes de qualquer
       // traço ou papel passar por ela; depois os cabos descem, viram a grade, e o papel da prancha sobe

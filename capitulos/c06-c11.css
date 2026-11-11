@@ -241,6 +241,8 @@
 /* selos de marcas */
 .c611-selos { row-gap: var(--c611-gap); }
 .c611-selo { grid-column: span 4; border: 1px solid currentColor; padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px; }
+/* v16: 5 selos: os dois da linha de baixo (Hoje) dividem a largura, sem buraco na grade */
+@media (min-width: 901px) { .c611-selos .c611-selo:nth-child(n+4):nth-last-child(-n+2) { grid-column: span 6; } }
 .c611-selo .c611-mono { text-transform: uppercase; letter-spacing: .1em; font-size: 12px; color: var(--c611-am); }
 .c611-selo-t { font-family: var(--c611-serif); font-size: clamp(28px, 2.5vw, 42px); line-height: 1; letter-spacing: -.02em; }
 /* parede de prêmios */
@@ -317,7 +319,7 @@
   /* texto de leitura não passa por baixo do botão de tela cheia (44 px a 16 px do canto) */
   .c611 :is(p, li, h2, h3, figcaption):not(.c611-mono, .c611-bn-n, .c611-bn-k, .c611-count, .c611-ficha-n, .c611-oper-n, .c611-caminho-t, .c611-cida-big) { padding-right: 56px; }
   .c611 .c611-ficha-src { padding-right: 56px; }
-  .c611-car-print { width: min(100%, 300px); }
+  .c611-car-print { width: min(100%, 300px); margin-top: 64px; } /* v16: respiro sob a frase, mesmo com o parallax da imagem */
 
   .c611-cida-foto { max-width: 520px; }
   .c611-cida-nums { grid-template-columns: repeat(2, minmax(0, 1fr)); }

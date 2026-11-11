@@ -155,3 +155,6 @@ body[data-opcao="estaiada"] .c611-oper-n { font-size: clamp(32px, 3.4vw, 56px); 
   body[data-opcao="estaiada"] .c611-oper-l li { grid-template-columns: minmax(0, 1fr); }
   body[data-opcao="estaiada"] .c611-oper-n { font-size: clamp(36px, 11vw, 48px); }
 }
+
+/* v16: a cota dos números do cap. 2 mede só o algarismo; antes ia até a coluna inteira e encostava no fio divisório (pedido da Cida, 11/11) */
+body[data-opcao="estaiada"] .c02 .cx-big.e1-cota { width: fit-content; }
