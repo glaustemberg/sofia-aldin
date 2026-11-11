@@ -250,11 +250,11 @@
 .c611-rec-l li:last-child { border-bottom: 1px solid currentColor; }
 .c611-rec-l .c611-mono { color: var(--c611-am); padding-top: 3px; }
 .c611-rec-l b { font-weight: 500; }
-.c611-sites { row-gap: 0; border-bottom: 1px solid currentColor; }
-.c611-sites li { grid-column: span 4; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; row-gap: 4px; align-items: start; align-content: start; padding: 22px 0; border-top: 1px solid currentColor; }
-.c611-sites-n { grid-row: span 2; font-family: var(--c611-serif); font-size: clamp(44px, 4vw, 64px); line-height: .9; color: var(--c611-am); font-variant-numeric: tabular-nums; }
-.c611-sites-t { font-family: var(--c611-serif); font-size: clamp(20px, 1.6vw, 26px); line-height: 1.1; }
-.c611-sites li p:last-child { grid-column: 2; max-width: 30ch; }
+.c611-sites { display: flex; flex-wrap: wrap; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; }
+.c611-sites li { font-family: var(--c611-serif); font-size: clamp(18px, 1.7vw, 30px); line-height: 1.1; padding: 22px 24px 22px 0; margin-right: 24px; border-right: 1px solid currentColor; }
+.c611-sites li:last-child { border-right: 0; margin-right: 0; }
+.c611-berg .c611-cida-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.c611-berg .c611-cida-big { font-size: clamp(64px, 6.2vw, 112px); }
 /* selos de marcas */
 .c611-selos { row-gap: var(--c611-gap); }
 .c611-selo { grid-column: span 4; border: 1px solid currentColor; padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px; }
@@ -346,8 +346,13 @@
   .c611-traj-l li { padding: 0 0 32px 28px; }
   .c611-traj-l li::before { top: 4px; left: -6px; }
   .c611-areas .c611-area, .c611-selos .c611-selo, .c611-traj-l li { grid-column: 1 / -1; }
-  .c611-rec-col, .c611-sites li { grid-column: 1 / -1; }
-  .c611 .c611-sites .c611-sites-n { padding-right: 0; min-width: 1.4ch; }
+  .c611-rec-col { grid-column: 1 / -1; }
+  .c611-sites { display: block; }
+  .c611-sites li { border-right: 0; margin-right: 0; padding: 14px 0; border-top: 1px solid currentColor; }
+  .c611-sites li:first-child { border-top: 0; }
+  .c611-berg .c611-cida-nums { grid-template-columns: minmax(0, 1fr); }
+  .c611-berg .c611-cida-n { display: grid; grid-template-columns: 30vw minmax(0, 1fr); column-gap: 16px; align-items: center; }
+  .c611-berg .c611-cida-big { font-size: 16vw; margin: 0; white-space: nowrap; }
   .c611-rec-l li { grid-template-columns: 1fr; row-gap: 4px; }
   .c611-premios { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .c611-premios .c611-premio { grid-column: span 1; padding: 16%; }

@@ -159,5 +159,4 @@ body[data-opcao="estaiada"] .c611-oper-n { font-size: clamp(32px, 3.4vw, 56px); 
 /* v16: a cota dos números do cap. 2 mede só o algarismo; antes ia até a coluna inteira e encostava no fio divisório (pedido da Cida, 11/11) */
 body[data-opcao="estaiada"] :is(.c02 .cx-big, .c611-cida-big).e1-cota { width: fit-content; }
 /* 09b: números e títulos do reconhecimento do Berg no tipo da prancha */
-body[data-opcao="estaiada"] .c611-sites-n { font-family: "IBM Plex Mono", ui-monospace, monospace; font-weight: 400; letter-spacing: -.07em; }
-body[data-opcao="estaiada"] :is(.c611-rec-t, .c611-sites-t) { font-family: "Inter Tight", system-ui, sans-serif; font-weight: 400; letter-spacing: -.015em; }
+body[data-opcao="estaiada"] :is(.c611-rec-t, .c611-sites li) { font-family: "Inter Tight", system-ui, sans-serif; font-weight: 400; letter-spacing: -.015em; }
