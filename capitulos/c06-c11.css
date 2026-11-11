@@ -243,6 +243,12 @@
 .c611-area p:last-child { max-width: 30ch; }
 /* 09b: Berg, 4 áreas em 2x2; reconhecimento em duas listas; sites especializados */
 .c611-berg .c611-area { grid-column: span 6; }
+.c611-traj-4 li { grid-column: span 3; }
+.c611-ag { display: flex; flex-direction: column; margin-top: 6px; }
+.c611-traj-l .c611-ag li { grid-column: auto; display: flex; flex-direction: row; justify-content: space-between; gap: 12px; position: static; padding: 9px 0; border-top: 1px solid currentColor; font-size: clamp(15px, 1.1vw, 17px); }
+.c611-traj-l .c611-ag li::before { content: none; }
+.c611-traj-l .c611-ag li:last-child { border-bottom: 1px solid currentColor; }
+.c611-ag .c611-mono { color: var(--c611-am); white-space: nowrap; font-size: 12px; padding-top: 3px; }
 .c611-rec { row-gap: 48px; }
 .c611-rec-col { grid-column: span 6; }
 .c611-rec-t { font-family: var(--c611-serif); font-size: clamp(24px, 2vw, 32px); line-height: 1.1; margin-bottom: 18px; text-wrap: balance; }
@@ -253,8 +259,7 @@
 .c611-sites { display: flex; flex-wrap: wrap; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; }
 .c611-sites li { font-family: var(--c611-serif); font-size: clamp(18px, 1.7vw, 30px); line-height: 1.1; padding: 22px 24px 22px 0; margin-right: 24px; border-right: 1px solid currentColor; }
 .c611-sites li:last-child { border-right: 0; margin-right: 0; }
-.c611-berg .c611-cida-nums { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.c611-berg .c611-cida-big { font-size: clamp(64px, 6.2vw, 112px); }
+.c611-berg .c611-cida-big { font-size: clamp(72px, 8vw, 140px); }
 /* selos de marcas */
 .c611-selos { row-gap: var(--c611-gap); }
 .c611-selo { grid-column: span 4; border: 1px solid currentColor; padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 10px; }
