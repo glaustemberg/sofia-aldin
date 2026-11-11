@@ -135,9 +135,10 @@
       q(".c611-area, .c611-traj-l li").forEach(function (el) {
         gsap.from(q(":scope > p", el), { y: 20, opacity: 0, stagger: .06, duration: 1, ease: "expo.out", scrollTrigger: { trigger: el, start: "top 90%" } });
       });
-      var selos = root.querySelector(".c611-selos");
-      if (selos) gsap.from(q(".c611-selo", selos), { y: 40, opacity: 0, stagger: .08, ease: "power2.out",
-        scrollTrigger: { trigger: selos, start: "top 88%", end: "bottom 70%", scrub: .6 } });
+      q(".c611-selos").forEach(function (selos) {  // Cida e Berg
+        gsap.from(q(".c611-selo", selos), { y: 40, opacity: 0, stagger: .08, ease: "power2.out",
+          scrollTrigger: { trigger: selos, start: "top 88%", end: "bottom 70%", scrub: .6 } });
+      });
       var parede = root.querySelector(".c611-premios");
       if (parede) {
         var tp = gsap.timeline({ scrollTrigger: { trigger: parede, start: "top 92%", end: "bottom 85%", scrub: .6 } });

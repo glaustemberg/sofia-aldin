@@ -220,6 +220,9 @@
 .c611-cida-n { border-top: 1px solid currentColor; padding-top: 18px; }
 .c611-cida-big { font-family: var(--c611-serif); font-size: clamp(96px, 11vw, 184px); line-height: .82; letter-spacing: -.05em; color: var(--c611-am); font-variant-numeric: lining-nums tabular-nums; margin: 0 0 12px -.04em; }
 .c611-cida-n-t { max-width: 22ch; }
+/* 09b: Berg, mesmo modelo da Cida, com a foto do lado direito */
+.c611-berg { padding-top: clamp(40px, 6vh, 80px); }
+@media (min-width: 901px) { .c611-berg .c611-cida-foto { grid-column: 8 / -1; order: 2; } .c611-berg .c611-cida-txt { grid-column: 1 / 7; order: 1; } }
 .c611-cida-bloco { margin-top: clamp(80px, 12vh, 140px); }
 .c611-cida-bloco > .c611-label { margin-bottom: 28px; }
 /* trajetória */
